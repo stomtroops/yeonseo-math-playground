@@ -1,0 +1,16 @@
+{
+  "name": "마이멜로디 감성 수학 놀이터",
+  "short_name": "수학놀이터",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffe9f4",
+  "theme_color": "#ff7fb5",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
