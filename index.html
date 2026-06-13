@@ -261,6 +261,69 @@
       word-break: keep-all;
     }
 
+    .question.visual-question {
+      min-height: 176px;
+      padding: 12px;
+      line-height: 1.1;
+    }
+
+    .domino-question {
+      width: min(360px, 100%);
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .domino-card {
+      width: min(300px, 100%);
+      height: 94px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      border: 8px solid #d86d31;
+      border-radius: 8px;
+      background: #d86d31;
+      box-shadow: 0 8px 0 rgba(216, 109, 49, 0.2);
+    }
+
+    .domino-half {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 2px;
+      padding: 8px;
+      background: #d86d31;
+      border-right: 3px solid #b85627;
+    }
+
+    .domino-half:last-child {
+      border-right: 0;
+      background: #fff8f1;
+    }
+
+    .domino-cell {
+      display: grid;
+      place-items: center;
+    }
+
+    .domino-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16);
+    }
+
+    .domino-half:last-child .domino-dot {
+      background: #7c675b;
+    }
+
+    .domino-prompt {
+      color: var(--ink);
+      font-size: 1.25rem;
+      font-weight: 1000;
+    }
+
     .answer-display {
       min-height: 290px;
       display: grid;
@@ -288,6 +351,13 @@
       justify-content: center;
       font-size: 1.15rem;
       line-height: 1.15;
+    }
+
+    .answer-body {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(92px, 0.28fr);
+      gap: 10px;
     }
 
     .mascot-stage {
@@ -530,7 +600,8 @@
 
     .segment-button,
     .action-button,
-    .choice-button {
+    .choice-button,
+    .submit-button {
       min-height: 48px;
       border-radius: var(--radius);
       cursor: pointer;
@@ -554,7 +625,8 @@
 
     .segment-button:active,
     .action-button:active,
-    .choice-button:active {
+    .choice-button:active,
+    .submit-button:active {
       transform: scale(0.97);
     }
 
@@ -711,6 +783,17 @@
       box-shadow: 0 6px 0 rgba(226, 61, 109, 0.18);
     }
 
+    .submit-button {
+      min-height: 100%;
+      padding: 0 10px;
+      background: var(--teal);
+      border: 2px solid var(--teal-dark);
+      color: #ffffff;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      box-shadow: 0 6px 0 rgba(224, 69, 126, 0.28);
+    }
+
     .actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -735,7 +818,8 @@
     }
 
     .action-button:disabled,
-    .choice-button:disabled {
+    .choice-button:disabled,
+    .submit-button:disabled {
       cursor: not-allowed;
       filter: grayscale(0.65);
       opacity: 0.5;
@@ -888,6 +972,21 @@
         font-size: 3.4rem;
       }
 
+      .question.visual-question {
+        min-height: 146px;
+      }
+
+      .domino-card {
+        width: min(248px, 100%);
+        height: 76px;
+        border-width: 6px;
+      }
+
+      .domino-dot {
+        width: 11px;
+        height: 11px;
+      }
+
       .question.word-problem {
         font-size: 2.35rem;
       }
@@ -895,6 +994,11 @@
       .answer-display {
         min-height: 236px;
         padding: 9px;
+        gap: 7px;
+      }
+
+      .answer-body {
+        grid-template-columns: minmax(0, 1fr) 84px;
         gap: 7px;
       }
 
@@ -955,13 +1059,18 @@
 
       .segment-button,
       .action-button,
-      .choice-button {
+      .choice-button,
+      .submit-button {
         min-height: 42px;
       }
 
       .choice-button {
         min-height: 88px;
         font-size: 3.4rem;
+      }
+
+      .submit-button {
+        font-size: 1.05rem;
       }
 
       .score-item {
@@ -1048,12 +1157,20 @@
         font-size: 3.35rem;
       }
 
+      .question.visual-question {
+        min-height: 156px;
+      }
+
       .question.word-problem {
         font-size: 2.05rem;
       }
 
       .answer-display {
         min-height: 246px;
+      }
+
+      .answer-body {
+        grid-template-columns: 1fr;
       }
 
       .mascot-stage {
@@ -1085,6 +1202,10 @@
       .choice-button {
         min-height: 86px;
         font-size: 3rem;
+      }
+
+      .submit-button {
+        min-height: 56px;
       }
 
       .actions {
@@ -1123,6 +1244,7 @@
         <button class="segment-button" type="button" data-mode="missing" aria-pressed="false">빈칸</button>
         <button class="segment-button" type="button" data-mode="makeTen" aria-pressed="false">10만들기</button>
         <button class="segment-button" type="button" data-mode="bridge" aria-pressed="false">20·30</button>
+        <button class="segment-button" type="button" data-mode="dice" aria-pressed="false">주사위</button>
         <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
         <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
       </div>
@@ -1150,7 +1272,10 @@
           <div class="question" id="questionText">0 + 0</div>
           <div class="answer-display" id="answerDisplay" aria-live="polite">
             <span class="answer-label" id="answerLabel">답을 골라요</span>
-            <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
+            <div class="answer-body">
+              <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
+              <button class="submit-button" type="button" id="submitButton" disabled>입력</button>
+            </div>
           </div>
 
           <div class="mascot-stage is-ready" id="mascotStage" aria-live="polite">
@@ -1287,6 +1412,7 @@
       missing: { label: "빈칸", topic: "숨은 수" },
       makeTen: { label: "10만들기", topic: "10의 보수" },
       bridge: { label: "20·30", topic: "확장 연산" },
+      dice: { label: "주사위", topic: "점 합·차" },
       pattern: { label: "규칙", topic: "다음 수" },
       compare: { label: "비교", topic: "크기 비교" }
     };
@@ -1298,6 +1424,15 @@
     };
 
     const STORY_ITEMS = ["딸기", "쿠키", "스티커", "블록", "꽃"];
+    const DOT_LAYOUTS = {
+      0: [],
+      1: [4],
+      2: [0, 8],
+      3: [0, 4, 8],
+      4: [0, 2, 6, 8],
+      5: [0, 2, 4, 6, 8],
+      6: [0, 2, 3, 5, 6, 8]
+    };
     let autoAdvanceTimer = null;
 
     const state = {
@@ -1350,6 +1485,7 @@
       stickerMissionFill: document.getElementById("stickerMissionFill"),
       stickerBoard: document.getElementById("stickerBoard"),
       choicePanel: document.getElementById("choicePanel"),
+      submitButton: document.getElementById("submitButton"),
       modeButtons: [...document.querySelectorAll("[data-mode]")],
       levelButtons: [...document.querySelectorAll("[data-level]")],
       hintButton: document.getElementById("hintButton"),
@@ -1675,6 +1811,34 @@
       };
     }
 
+    function buildDiceQuestion() {
+      const useSum = Math.random() < 0.55;
+      const left = randInt(1, 6);
+      let right = randInt(1, 6);
+      if (!useSum) {
+        while (right === left) right = randInt(1, 6);
+      }
+
+      const big = Math.max(left, right);
+      const small = Math.min(left, right);
+      const answer = useSum ? left + right : big - small;
+      const operation = useSum ? "합" : "차";
+      const hintTokens = useSum
+        ? [left, "+", right, "=", BLANK_SYMBOL]
+        : [big, "-", small, "=", BLANK_SYMBOL];
+
+      return {
+        mode: "dice",
+        text: `양쪽 점의 ${operation}`,
+        answer,
+        key: `dice-${operation}-${left}-${right}`,
+        isWord: false,
+        visual: { type: "domino", left, right, operation },
+        preferredChoices: [left, right, big, small],
+        hint: makeHint(`도미노 양쪽 점의 ${operation}을 생각해 봐.`, hintTokens)
+      };
+    }
+
     function buildPatternQuestion(level) {
       const step = randInt(1, level.stepMax);
       const start = randInt(0, Math.max(0, level.max - (step * 4)));
@@ -1744,6 +1908,7 @@
         missing: buildMissingQuestion,
         makeTen: buildMakeTenQuestion,
         bridge: buildBridgeQuestion,
+        dice: buildDiceQuestion,
         pattern: buildPatternQuestion,
         compare: buildCompareQuestion
       };
@@ -1799,11 +1964,10 @@
     function selectChoice(choice) {
       if (state.locked || state.finished) return;
       state.answerText = String(choice);
-      state.message = "좋아, 같이 확인해보자.";
+      state.message = "좋아. 입력을 눌러 확인해줘.";
       state.messageType = "";
       state.mascotCheering = false;
       render();
-      checkAnswer();
     }
 
     function playTone(kind) {
@@ -1832,7 +1996,7 @@
     function checkAnswer() {
       if (state.locked || state.finished) return;
       if (!state.answerText) {
-        state.message = "답을 먼저 골라줘.";
+        state.message = "답을 먼저 고르고 입력을 눌러줘.";
         state.messageType = "bad";
         render();
         return;
@@ -1878,7 +2042,7 @@
     function nextQuestion() {
       if (state.finished) return;
       if (!state.locked) {
-        state.message = "확인을 먼저 눌러줘.";
+        state.message = "입력을 먼저 눌러줘.";
         state.messageType = "bad";
         render();
         return;
@@ -1924,6 +2088,57 @@
       state.message = "힌트를 보고 다시 생각해 봐.";
       state.messageType = "";
       render();
+    }
+
+    function createDominoHalf(count) {
+      const half = document.createElement("div");
+      half.className = "domino-half";
+      const dots = new Set(DOT_LAYOUTS[count] || []);
+
+      for (let i = 0; i < 9; i += 1) {
+        const cell = document.createElement("span");
+        cell.className = "domino-cell";
+        if (dots.has(i)) {
+          const dot = document.createElement("span");
+          dot.className = "domino-dot";
+          cell.append(dot);
+        }
+        half.append(cell);
+      }
+
+      return half;
+    }
+
+    function createDominoQuestion(visual) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "domino-question";
+
+      const domino = document.createElement("div");
+      domino.className = "domino-card";
+      domino.setAttribute("aria-label", `왼쪽 ${visual.left}개, 오른쪽 ${visual.right}개`);
+      domino.append(createDominoHalf(visual.left), createDominoHalf(visual.right));
+
+      const prompt = document.createElement("div");
+      prompt.className = "domino-prompt";
+      prompt.textContent = `양쪽 점의 ${visual.operation}은?`;
+
+      wrapper.append(domino, prompt);
+      return wrapper;
+    }
+
+    function renderQuestion() {
+      els.questionText.replaceChildren();
+      els.questionText.className = "question";
+      if (!state.current) return;
+
+      if (state.current.visual?.type === "domino") {
+        els.questionText.classList.add("visual-question");
+        els.questionText.append(createDominoQuestion(state.current.visual));
+        return;
+      }
+
+      els.questionText.textContent = state.current.text;
+      els.questionText.classList.toggle("word-problem", state.current.isWord);
     }
 
     function renderHint() {
@@ -1983,10 +2198,7 @@
       els.streakInfo.textContent = `연속 정답 ${state.streak}`;
       els.attemptBadge.textContent = state.locked ? "풀이 완료" : state.attempts === 0 ? "첫 번째 도전" : "두 번째 도전";
 
-      if (state.current) {
-        els.questionText.textContent = state.current.text;
-        els.questionText.classList.toggle("word-problem", state.current.isWord);
-      }
+      renderQuestion();
 
       els.answerLabel.textContent = state.answerText ? `고른 답 ${state.answerText}` : "답을 골라요";
       els.answerDisplay.classList.toggle("has-value", Boolean(state.answerText));
@@ -2000,6 +2212,7 @@
       els.scoreInfo.textContent = state.score;
       els.correctInfo.textContent = state.correct;
       els.starInfo.textContent = getStarCount();
+      els.submitButton.disabled = !state.answerText || state.locked || state.finished;
       els.nextButton.disabled = !state.locked || state.finished;
       els.hintButton.disabled = state.finished;
 
@@ -2045,6 +2258,7 @@
     });
 
     els.hintButton.addEventListener("click", openHint);
+    els.submitButton.addEventListener("click", checkAnswer);
     els.nextButton.addEventListener("click", nextQuestion);
     els.restartButton.addEventListener("click", () => resetGame(state.mode, state.level));
 
@@ -2055,7 +2269,11 @@
       }
 
       if (event.key === "Enter") {
-        if (state.locked) nextQuestion();
+        if (state.locked) {
+          nextQuestion();
+        } else {
+          checkAnswer();
+        }
       }
     });
 
