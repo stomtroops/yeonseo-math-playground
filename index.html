@@ -2,413 +2,1312 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#ff7fb5" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff80ab" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="수학놀이터" />
+  <meta name="apple-mobile-web-app-title" content="연서연산" />
+  <meta name="description" content="7살 연서를 위한 분홍 토끼 연산 연습 앱" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="icon.svg" />
-  <title>마이멜로디 감성 수학 놀이터</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <title>연서의 연산 놀이터</title>
   <style>
     :root {
-      --pink-100: #ffe5f1;
-      --pink-200: #ffc9df;
-      --pink-300: #ffadd0;
-      --pink-500: #ff7fb5;
-      --pink-700: #d94885;
-      --mint-200: #d8fff4;
-      --white: #ffffff;
-      --text: #4d3550;
-      --ok: #2b8a6e;
-      --bad: #d6336c;
-      --shadow: 0 20px 35px rgba(217, 72, 133, 0.18);
+      --paper: #fff6fb;
+      --ink: #5b3349;
+      --muted: #b07f97;
+      --line: #ffd4e6;
+      --coral: #ff5d99;
+      --coral-soft: #ffe1ee;
+      --teal: #ff80ab;
+      --teal-dark: #e0457e;
+      --mint: #ffe3f1;
+      --sun: #ffc94d;
+      --sun-soft: #fff0cf;
+      --sky: #c79cff;
+      --sky-soft: #f2e9ff;
+      --grape: #b388ff;
+      --good: #2fa36b;
+      --bad: #e23d6d;
+      --shadow: 0 24px 54px rgba(224, 69, 126, 0.18);
+      --radius: 18px;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      min-height: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Baloo 2", "Arial Rounded MT Bold", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-      color: var(--text);
+      min-height: 100dvh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 20% 15%, #fff9cf 0 14%, transparent 15%),
-        radial-gradient(circle at 82% 14%, #e3f5ff 0 12%, transparent 13%),
-        radial-gradient(circle at 88% 82%, #fde2ff 0 11%, transparent 12%),
-        linear-gradient(160deg, #ffe9f4 0%, #ffe0f0 45%, #fff4cf 100%);
-      display: grid;
-      place-items: center;
-      padding: 16px;
+        radial-gradient(circle at 16px 16px, rgba(255, 128, 171, 0.16) 5px, transparent 6px),
+        radial-gradient(circle at 16px 16px, rgba(199, 156, 255, 0.14) 5px, transparent 6px),
+        linear-gradient(180deg, #fff0f7 0%, #fff6fb 46%, #f7eeff 100%);
+      background-size: 44px 44px, 44px 44px, auto;
+      background-position: 0 0, 22px 22px, 0 0;
+      overscroll-behavior: none;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    button:focus-visible {
+      outline: 4px solid rgba(19, 184, 166, 0.28);
+      outline-offset: 3px;
     }
 
     .app {
-      width: min(760px, 100%);
-      background: var(--white);
-      border-radius: 28px;
-      padding: 22px;
+      width: min(1180px, 100%);
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .topbar,
+    .progress-strip,
+    .practice-panel,
+    .control-panel,
+    .result-panel {
+      background: rgba(255, 253, 248, 0.96);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
-      border: 3px solid #ffd0e6;
-      position: relative;
-      overflow: hidden;
     }
 
-    .app::before,
-    .app::after {
-      content: "🎀";
-      position: absolute;
-      font-size: 1.7rem;
-      opacity: 0.6;
-    }
-
-    .app::before {
-      top: 8px;
-      left: 14px;
-    }
-
-    .app::after {
-      top: 8px;
-      right: 14px;
-    }
-
-    h1 {
-      margin: 6px 0 8px;
-      text-align: center;
-      font-size: clamp(1.5rem, 4.5vw, 2.2rem);
-      color: var(--pink-700);
-    }
-
-    .subtitle {
-      text-align: center;
-      margin: 0 0 16px;
-      font-weight: 700;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 14px;
-      font-size: 1rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.1s ease, filter 0.1s ease;
-    }
-
-    .btn:hover {
-      filter: brightness(1.03);
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn.mode {
-      background: var(--pink-100);
-      color: var(--pink-700);
-      border: 2px solid #ffc2dd;
-    }
-
-    .btn.mode.active {
-      background: var(--pink-500);
-      color: #fff;
-      border-color: var(--pink-500);
-    }
-
-    .board {
-      background: linear-gradient(180deg, #fff9fd 0%, #fff3fb 100%);
-      border-radius: 24px;
-      padding: 18px;
-      text-align: center;
-      border: 2px dashed #ffc2dd;
-    }
-
-    .stats {
+    .topbar {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-      font-weight: 800;
+      gap: 14px;
+      padding: 12px 14px;
     }
 
-    .chip {
-      background: var(--mint-200);
-      border-radius: 999px;
-      padding: 6px 12px;
-      border: 1px solid #b4f2e1;
-    }
-
-    .question {
-      font-size: clamp(2rem, 9vw, 3.2rem);
-      margin: 14px 0;
-      color: #c2255c;
-      text-shadow: 0 3px 0 #ffe2ef;
-    }
-
-    .answer-area {
+    .brand {
+      min-width: 0;
       display: flex;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
+      align-items: center;
+      gap: 12px;
     }
 
-    input[type="number"] {
-      width: 150px;
-      font-size: 1.5rem;
-      padding: 10px;
-      border-radius: 16px;
-      border: 2px solid #ffb6d6;
-      text-align: center;
-      color: var(--pink-700);
-      font-weight: 800;
-      outline: none;
+    .brand img {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 auto;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 20px rgba(224, 69, 126, 0.22);
     }
 
-    input[type="number"]:focus {
-      border-color: var(--pink-500);
-      box-shadow: 0 0 0 4px #ffd7ea;
-    }
-
-    .btn.check {
-      background: var(--pink-500);
-      color: #fff;
-      min-width: 110px;
-    }
-
-    .btn.next {
-      background: #ffb03a;
-      color: #fff;
-      min-width: 110px;
-    }
-
-    .message {
-      min-height: 32px;
-      font-size: 1.06rem;
+    .eyebrow {
+      margin: 0 0 2px;
+      color: var(--teal-dark);
+      font-size: 0.82rem;
       font-weight: 900;
     }
 
-    .message.ok {
-      color: var(--ok);
+    h1 {
+      margin: 0;
+      font-size: 1.55rem;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .best-pill {
+      min-width: 116px;
+      min-height: 42px;
+      padding: 8px 12px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--sun-soft);
+      color: #705200;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .progress-strip {
+      padding: 10px 12px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #e8eef1;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: var(--radius);
+      background: linear-gradient(90deg, var(--teal), var(--sky), var(--sun));
+      transition: width 220ms ease;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .practice-panel {
+      min-height: 500px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      min-height: 36px;
+      padding: 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      background: var(--sky-soft);
+      color: #6b3fae;
+      font-weight: 900;
+    }
+
+    .badge.streak {
+      background: var(--mint);
+      color: var(--teal-dark);
+    }
+
+    .question-zone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .question {
+      min-height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #ffffff 0%, #fff3f9 100%);
+      border: 2px solid #ffc9e0;
+      color: #5b3349;
+      font-size: 4.4rem;
+      font-weight: 1000;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .answer-display {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      border: 2px solid var(--line);
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 2.2rem;
+      font-weight: 1000;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .answer-display.has-value {
+      color: var(--coral);
+      border-color: var(--coral);
+      background: var(--coral-soft);
+    }
+
+    .mascot-stage {
+      min-height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 8px 0 0;
+    }
+
+    .mascot-stage[hidden] {
+      display: none;
+    }
+
+    .speech-bubble {
+      position: relative;
+      min-width: 118px;
+      padding: 12px 16px;
+      border: 3px solid var(--coral);
+      border-radius: var(--radius);
+      background: #ffffff;
+      color: var(--coral);
+      font-size: 1.45rem;
+      font-weight: 1000;
+      box-shadow: 0 8px 0 rgba(255, 107, 107, 0.18);
+      animation: bubblePop 340ms ease both;
+    }
+
+    .mascot-stage.is-ready .speech-bubble {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      box-shadow: 0 8px 0 rgba(19, 184, 166, 0.18);
+    }
+
+    .speech-bubble::after {
+      content: "";
+      position: absolute;
+      right: -13px;
+      top: 42%;
+      width: 20px;
+      height: 20px;
+      border-right: 3px solid var(--coral);
+      border-bottom: 3px solid var(--coral);
+      background: #ffffff;
+      transform: rotate(-45deg);
+    }
+
+    .mascot-stage.is-ready .speech-bubble::after {
+      border-color: var(--teal);
+    }
+
+    .bunny-mascot {
+      width: min(190px, 34vw);
+      max-width: 190px;
+      height: auto;
+      overflow: visible;
+    }
+
+    .mascot-arm {
+      transform-origin: 168px 150px;
+    }
+
+    .mascot-stage.is-cheering .bunny-mascot {
+      animation: mascotBounce 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .mascot-stage.is-cheering .mascot-arm {
+      animation: thumbWave 680ms ease-in-out 80ms both;
+    }
+
+    .hint-area {
+      min-height: 118px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 2px dashed #acd7c8;
+      background: #f8fffb;
+    }
+
+    .hint-area[hidden] {
+      display: none;
+    }
+
+    .hint-title {
+      margin-bottom: 10px;
+      color: var(--teal-dark);
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .counter-row {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .counter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.11);
+    }
+
+    .counter.second {
+      background: var(--sun);
+    }
+
+    .counter.removed {
+      position: relative;
+      background: #c8d3d9;
+    }
+
+    .counter.removed::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      top: 13px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--bad);
+      transform: rotate(-28deg);
+    }
+
+    .message {
+      min-height: 42px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 1.2rem;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .message.good {
+      color: var(--good);
     }
 
     .message.bad {
       color: var(--bad);
     }
 
-    .stars {
-      font-size: 1.4rem;
-      letter-spacing: 2px;
-      margin-top: 8px;
-    }
-
-    .footer {
-      margin: 14px 0 0;
-      text-align: center;
-      font-size: 0.93rem;
-      font-weight: 700;
-      color: #7b5f7f;
-    }
-
-    @media (max-width: 520px) {
-      .app {
-        padding: 16px;
+    @keyframes mascotBounce {
+      0% {
+        opacity: 0;
+        transform: translateY(22px) scale(0.86);
       }
 
-      .controls {
+      65% {
+        opacity: 1;
+        transform: translateY(-8px) scale(1.04);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes thumbWave {
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      42% {
+        transform: rotate(-15deg);
+      }
+
+      68% {
+        transform: rotate(8deg);
+      }
+    }
+
+    @keyframes bubblePop {
+      0% {
+        opacity: 0;
+        transform: scale(0.76);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .control-panel {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-title {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 900;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .segment-button,
+    .action-button,
+    .key {
+      min-height: 48px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 1000;
+      transition: transform 100ms ease, filter 100ms ease, box-shadow 100ms ease;
+    }
+
+    .segment-button {
+      padding: 8px;
+      background: #ffffff;
+      border: 2px solid var(--line);
+      color: var(--ink);
+    }
+
+    .segment-button[aria-pressed="true"] {
+      border-color: var(--teal);
+      background: var(--mint);
+      color: var(--teal-dark);
+      box-shadow: inset 0 0 0 2px rgba(255, 128, 171, 0.28);
+    }
+
+    .segment-button:active,
+    .action-button:active,
+    .key:active {
+      transform: scale(0.97);
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--line);
+    }
+
+    .score-item {
+      min-height: 60px;
+      padding: 10px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      background: #ffffff;
+      text-align: center;
+    }
+
+    .score-item span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .score-item strong {
+      color: var(--ink);
+      font-size: 1.3rem;
+      font-weight: 1000;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .key {
+      min-height: 52px;
+      background: #ffffff;
+      border: 2px solid #ffcfe3;
+      color: #5b3349;
+      font-size: 1.55rem;
+      box-shadow: 0 6px 0 #ffcfe3;
+    }
+
+    .key.utility {
+      background: var(--sky-soft);
+      color: #6b3fae;
+      font-size: 1rem;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 0.9fr 1.25fr 1.1fr;
+      gap: 7px;
+    }
+
+    .action-button {
+      padding: 0 10px;
+      border: 2px solid transparent;
+    }
+
+    .action-button.hint {
+      background: var(--sun-soft);
+      color: #705200;
+      border-color: #f3c85d;
+    }
+
+    .action-button.primary {
+      background: var(--teal);
+      color: #ffffff;
+      box-shadow: 0 8px 0 #d6437e;
+    }
+
+    .action-button.next {
+      background: var(--coral);
+      color: #ffffff;
+      box-shadow: 0 8px 0 #d94e4e;
+    }
+
+    .action-button:disabled,
+    .key:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.65);
+      opacity: 0.5;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .result-panel {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      border-color: #f3c85d;
+      background: linear-gradient(180deg, #fffdf8 0%, #fff8dd 100%);
+    }
+
+    .result-panel[hidden] {
+      display: none;
+    }
+
+    .result-panel h2 {
+      margin: 0 0 6px;
+      font-size: 1.45rem;
+      letter-spacing: 0;
+    }
+
+    .result-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .stars {
+      margin-top: 10px;
+      color: #f2a900;
+      font-size: 2rem;
+      font-weight: 1000;
+      letter-spacing: 0;
+    }
+
+    .restart-button {
+      min-width: 148px;
+      min-height: 56px;
+      padding: 0 16px;
+      border-radius: var(--radius);
+      background: var(--grape);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 1000;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .workspace {
         grid-template-columns: 1fr;
       }
 
-      input[type="number"] {
-        width: 120px;
+      .practice-panel {
+        min-height: 360px;
+      }
+
+      .control-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
+        align-items: start;
+      }
+
+      .control-panel > div:nth-child(1),
+      .control-panel > div:nth-child(2),
+      .score-grid,
+      .actions {
+        grid-column: 1;
+      }
+
+      .keypad {
+        grid-column: 2;
+        grid-row: 1 / span 4;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .brand img {
+        width: 50px;
+        height: 50px;
+      }
+
+      h1 {
+        font-size: 1.28rem;
+      }
+
+      .best-pill {
+        min-width: 92px;
+        min-height: 40px;
+        font-size: 0.88rem;
+      }
+
+      .progress-meta,
+      .status-row {
+        font-size: 0.86rem;
+      }
+
+      .question {
+        min-height: 104px;
+        font-size: 3.35rem;
+      }
+
+      .answer-display {
+        min-height: 66px;
+        font-size: 1.7rem;
+      }
+
+      .mascot-stage {
+        min-height: 112px;
+        gap: 8px;
+      }
+
+      .speech-bubble {
+        min-width: 92px;
+        padding: 10px 12px;
+        font-size: 1.12rem;
+      }
+
+      .bunny-mascot {
+        width: min(150px, 42vw);
+      }
+
+      .practice-panel,
+      .control-panel,
+      .result-panel {
+        padding: 12px;
+      }
+
+      .control-panel {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .key {
+        min-height: 58px;
+        font-size: 1.32rem;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .restart-button {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <h1>🎀 마이멜로디 감성 수학 놀이터 🎀</h1>
-    <p class="subtitle">덧셈/뺄셈 10문제! 별을 모아보자</p>
+    <header class="topbar">
+      <div class="brand">
+        <img src="icon.svg" alt="" />
+        <div>
+          <p class="eyebrow">분홍 토끼와 오늘의 연습</p>
+          <h1>연서의 연산 놀이터</h1>
+        </div>
+      </div>
+      <div class="best-pill" id="bestPill">최고 0점</div>
+    </header>
 
-    <section class="controls">
-      <button class="btn mode active" data-mode="add">➕ 덧셈</button>
-      <button class="btn mode" data-mode="sub">➖ 뺄셈</button>
-      <button class="btn mode" data-mode="mix">🎲 섞어서</button>
+    <section class="progress-strip" aria-label="진행 상황">
+      <div class="progress-meta">
+        <span id="roundInfo">1 / 10</span>
+        <span id="modeInfo">덧셈 · 10까지</span>
+      </div>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
     </section>
 
-    <section class="board">
-      <div class="stats">
-        <span class="chip" id="roundInfo">문제: 1 / 10</span>
-        <span class="chip" id="scoreInfo">점수: 0</span>
-        <span class="chip" id="streakInfo">연속 정답: 0</span>
+    <div class="workspace">
+      <section class="practice-panel" aria-labelledby="questionHeading">
+        <div class="status-row">
+          <span class="badge" id="attemptBadge">첫 번째 도전</span>
+          <span class="badge streak" id="streakInfo">연속 정답 0</span>
+        </div>
+
+        <div class="question-zone">
+          <h2 class="sr-only" id="questionHeading">문제</h2>
+          <div class="question" id="questionText">0 + 0</div>
+          <div class="answer-display" id="answerDisplay" aria-live="polite">답을 눌러요</div>
+
+          <div class="mascot-stage is-ready" id="mascotStage" aria-live="polite">
+            <div class="speech-bubble" id="mascotSpeech">같이 풀자!</div>
+            <svg class="bunny-mascot" viewBox="0 0 220 180" role="img" aria-label="분홍 토끼 친구가 손을 흔들며 응원해요">
+              <!-- 귀 -->
+              <path d="M96 66C80 40 74 14 84 9c11-5 22 23 22 55z" fill="#fff6fb" stroke="#5b3349" stroke-width="6" stroke-linejoin="round"/>
+              <path d="M124 66C140 40 146 14 136 9c-11-5-22 23-22 55z" fill="#fff6fb" stroke="#5b3349" stroke-width="6" stroke-linejoin="round"/>
+              <path d="M99 60C90 42 86 24 91 21c6-3 11 17 11 39z" fill="#ffc1da"/>
+              <path d="M121 60c9-18 13-36 8-39-6-3-11 17-11 39z" fill="#ffc1da"/>
+              <!-- 분홍 후드 -->
+              <ellipse cx="110" cy="104" rx="66" ry="62" fill="#ff80ab" stroke="#5b3349" stroke-width="6"/>
+              <!-- 하얀 얼굴 -->
+              <ellipse cx="110" cy="112" rx="54" ry="52" fill="#fff6fb" stroke="#5b3349" stroke-width="6"/>
+              <!-- 볼터치 -->
+              <circle cx="80" cy="126" r="8" fill="#ffb3d1"/>
+              <circle cx="140" cy="126" r="8" fill="#ffb3d1"/>
+              <!-- 눈 -->
+              <ellipse cx="92" cy="110" rx="5.5" ry="7.5" fill="#4a2a3c"/>
+              <ellipse cx="128" cy="110" rx="5.5" ry="7.5" fill="#4a2a3c"/>
+              <circle cx="90" cy="107" r="2" fill="#fff6fb"/>
+              <circle cx="126" cy="107" r="2" fill="#fff6fb"/>
+              <!-- 코와 입 -->
+              <ellipse cx="110" cy="123" rx="6" ry="4.5" fill="#f59078"/>
+              <path d="M104 132c4 4 8 4 12 0" fill="none" stroke="#5b3349" stroke-width="3" stroke-linecap="round"/>
+              <!-- 후드 위의 꽃 -->
+              <g>
+                <circle cx="152" cy="64" r="7" fill="#ff4f8e"/>
+                <circle cx="162" cy="71" r="7" fill="#ff4f8e"/>
+                <circle cx="158" cy="82" r="7" fill="#ff4f8e"/>
+                <circle cx="146" cy="82" r="7" fill="#ff4f8e"/>
+                <circle cx="142" cy="71" r="7" fill="#ff4f8e"/>
+                <circle cx="152" cy="73" r="5" fill="#ffd166"/>
+              </g>
+              <!-- 흔드는 손 -->
+              <g class="mascot-arm">
+                <path d="M160 134c10-7 23-4 27 6 4 9-2 20-13 22-12 2-22-6-22-16 0-5 3-9 8-12z" fill="#fff6fb" stroke="#5b3349" stroke-width="6" stroke-linejoin="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="hint-area" id="hintArea" hidden>
+            <div class="hint-title" id="hintTitle">그림 힌트</div>
+            <div class="counter-row" id="counterRow" aria-hidden="true"></div>
+          </div>
+
+          <p class="message" id="message" aria-live="assertive">숫자를 눌러 답을 만들어봐.</p>
+        </div>
+      </section>
+
+      <aside class="control-panel" aria-label="연산 설정과 숫자 입력">
+        <div>
+          <p class="control-title">연산</p>
+          <div class="segmented" id="modeButtons">
+            <button class="segment-button" type="button" data-mode="add" aria-pressed="true">＋ 덧셈</button>
+            <button class="segment-button" type="button" data-mode="sub" aria-pressed="false">− 뺄셈</button>
+            <button class="segment-button" type="button" data-mode="mix" aria-pressed="false">섞어서</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="control-title">난이도</p>
+          <div class="segmented" id="levelButtons">
+            <button class="segment-button" type="button" data-level="easy" aria-pressed="true">10까지</button>
+            <button class="segment-button" type="button" data-level="steady" aria-pressed="false">20까지</button>
+            <button class="segment-button" type="button" data-level="challenge" aria-pressed="false">50까지</button>
+          </div>
+        </div>
+
+        <div class="score-grid" aria-label="점수판">
+          <div class="score-item">
+            <span>점수</span>
+            <strong id="scoreInfo">0</strong>
+          </div>
+          <div class="score-item">
+            <span>맞힘</span>
+            <strong id="correctInfo">0</strong>
+          </div>
+          <div class="score-item">
+            <span>별</span>
+            <strong id="starInfo">0</strong>
+          </div>
+        </div>
+
+        <div class="keypad" aria-label="숫자 키패드">
+          <button class="key" type="button" data-key="1">1</button>
+          <button class="key" type="button" data-key="2">2</button>
+          <button class="key" type="button" data-key="3">3</button>
+          <button class="key" type="button" data-key="4">4</button>
+          <button class="key" type="button" data-key="5">5</button>
+          <button class="key" type="button" data-key="6">6</button>
+          <button class="key" type="button" data-key="7">7</button>
+          <button class="key" type="button" data-key="8">8</button>
+          <button class="key" type="button" data-key="9">9</button>
+          <button class="key utility" type="button" data-action="backspace">⌫</button>
+          <button class="key" type="button" data-key="0">0</button>
+          <button class="key utility" type="button" data-action="clear">지움</button>
+        </div>
+
+        <div class="actions">
+          <button class="action-button hint" type="button" id="hintButton">힌트</button>
+          <button class="action-button primary" type="button" id="checkButton">확인</button>
+          <button class="action-button next" type="button" id="nextButton" disabled>다음</button>
+        </div>
+      </aside>
+    </div>
+
+    <section class="result-panel" id="resultPanel" hidden aria-live="polite">
+      <div>
+        <h2 id="resultTitle">오늘 연습 끝</h2>
+        <p id="resultText">10문제를 모두 풀었어요.</p>
+        <div class="stars" id="resultStars" aria-label="받은 별">☆☆☆</div>
       </div>
-
-      <div class="question" id="question">3 + 2 = ?</div>
-
-      <div class="answer-area">
-        <input id="answer" type="number" inputmode="numeric" min="0" aria-label="정답 입력" />
-        <button class="btn check" id="checkBtn">정답 확인</button>
-        <button class="btn next" id="nextBtn">다음 문제</button>
-      </div>
-
-      <div class="message" id="message"></div>
-      <div class="stars" id="stars">☆☆☆☆☆</div>
+      <button class="restart-button" type="button" id="restartButton">다시 시작</button>
     </section>
-
-    <p class="footer">연속 정답이 늘면 점수 보너스도 커져요!</p>
   </main>
 
   <script>
-    const totalQuestions = 10;
-    let mode = "add";
-    let qIndex = 1;
-    let score = 0;
-    let streak = 0;
-    let currentAnswer = 0;
-    let locked = false;
+    const TOTAL_QUESTIONS = 10;
+    const STORAGE_KEY = "yeonseo-math-state-v1";
 
-    const roundInfo = document.getElementById("roundInfo");
-    const scoreInfo = document.getElementById("scoreInfo");
-    const streakInfo = document.getElementById("streakInfo");
-    const questionEl = document.getElementById("question");
-    const answerInput = document.getElementById("answer");
-    const messageEl = document.getElementById("message");
-    const starsEl = document.getElementById("stars");
-    const checkBtn = document.getElementById("checkBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const modeButtons = [...document.querySelectorAll(".btn.mode")];
+    const MODES = {
+      add: { label: "덧셈", symbol: "+" },
+      sub: { label: "뺄셈", symbol: "-" },
+      mix: { label: "섞어서", symbol: "" }
+    };
+
+    const LEVELS = {
+      easy: { label: "10까지", max: 10 },
+      steady: { label: "20까지", max: 20 },
+      challenge: { label: "50까지", max: 50 }
+    };
+
+    const state = {
+      mode: "add",
+      level: "easy",
+      questionNumber: 1,
+      score: 0,
+      correct: 0,
+      streak: 0,
+      answerText: "",
+      attempts: 0,
+      locked: false,
+      finished: false,
+      hintOpen: false,
+      mascotCheering: false,
+      message: "연서야, 같이 풀자!",
+      messageType: "",
+      best: 0,
+      current: null,
+      lastQuestionKey: ""
+    };
+
+    const els = {
+      bestPill: document.getElementById("bestPill"),
+      roundInfo: document.getElementById("roundInfo"),
+      modeInfo: document.getElementById("modeInfo"),
+      progressBar: document.getElementById("progressBar"),
+      attemptBadge: document.getElementById("attemptBadge"),
+      streakInfo: document.getElementById("streakInfo"),
+      questionText: document.getElementById("questionText"),
+      answerDisplay: document.getElementById("answerDisplay"),
+      hintArea: document.getElementById("hintArea"),
+      hintTitle: document.getElementById("hintTitle"),
+      counterRow: document.getElementById("counterRow"),
+      mascotStage: document.getElementById("mascotStage"),
+      mascotSpeech: document.getElementById("mascotSpeech"),
+      message: document.getElementById("message"),
+      scoreInfo: document.getElementById("scoreInfo"),
+      correctInfo: document.getElementById("correctInfo"),
+      starInfo: document.getElementById("starInfo"),
+      modeButtons: [...document.querySelectorAll("[data-mode]")],
+      levelButtons: [...document.querySelectorAll("[data-level]")],
+      keys: [...document.querySelectorAll("[data-key], [data-action]")],
+      hintButton: document.getElementById("hintButton"),
+      checkButton: document.getElementById("checkButton"),
+      nextButton: document.getElementById("nextButton"),
+      resultPanel: document.getElementById("resultPanel"),
+      resultTitle: document.getElementById("resultTitle"),
+      resultText: document.getElementById("resultText"),
+      resultStars: document.getElementById("resultStars"),
+      restartButton: document.getElementById("restartButton")
+    };
+
+    function readStoredState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveSettings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        best: state.best,
+        mode: state.mode,
+        level: state.level
+      }));
+    }
 
     function randInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function chooseMode() {
-      if (mode === "mix") return Math.random() < 0.5 ? "add" : "sub";
-      return mode;
+      if (state.mode !== "mix") return state.mode;
+      return Math.random() < 0.5 ? "add" : "sub";
     }
 
     function makeQuestion() {
-      const activeMode = chooseMode();
-      let a = randInt(0, 20);
-      let b = randInt(0, 20);
+      const level = LEVELS[state.level];
+      let nextQuestion = null;
 
-      if (activeMode === "sub" && b > a) {
-        [a, b] = [b, a];
+      for (let i = 0; i < 8; i += 1) {
+        const activeMode = chooseMode();
+        let a = 0;
+        let b = 0;
+
+        if (activeMode === "add") {
+          a = randInt(0, level.max);
+          b = randInt(0, level.max - a);
+          if (a === 0 && b === 0) b = Math.min(1, level.max);
+        } else {
+          a = randInt(0, level.max);
+          b = randInt(0, a);
+          if (a === 0) a = Math.min(1, level.max);
+        }
+
+        const answer = activeMode === "add" ? a + b : a - b;
+        const key = `${a}${activeMode}${b}`;
+        nextQuestion = { a, b, mode: activeMode, answer, key };
+        if (key !== state.lastQuestionKey) break;
       }
 
-      currentAnswer = activeMode === "add" ? a + b : a - b;
-      questionEl.textContent = `${a} ${activeMode === "add" ? "+" : "-"} ${b} = ?`;
-      answerInput.value = "";
-      answerInput.focus();
-      locked = false;
-      messageEl.textContent = "";
-      messageEl.className = "message";
+      state.current = nextQuestion;
+      state.lastQuestionKey = nextQuestion.key;
+      state.answerText = "";
+      state.attempts = 0;
+      state.locked = false;
+      state.finished = false;
+      state.hintOpen = false;
+      state.mascotCheering = false;
+      state.message = "연서야, 같이 풀자!";
+      state.messageType = "";
+      render();
     }
 
-    function updateStats() {
-      roundInfo.textContent = `문제: ${qIndex} / ${totalQuestions}`;
-      scoreInfo.textContent = `점수: ${score}`;
-      streakInfo.textContent = `연속 정답: ${streak}`;
-      const starCount = Math.min(5, Math.floor(score / 20));
-      starsEl.textContent = "★".repeat(starCount) + "☆".repeat(5 - starCount);
+    function resetGame(nextMode = state.mode, nextLevel = state.level) {
+      state.mode = nextMode;
+      state.level = nextLevel;
+      state.questionNumber = 1;
+      state.score = 0;
+      state.correct = 0;
+      state.streak = 0;
+      state.finished = false;
+      state.lastQuestionKey = "";
+      els.resultPanel.hidden = true;
+      saveSettings();
+      makeQuestion();
     }
 
-    function finishRound() {
-      const praise = score >= 80 ? "정말 최고야!" : score >= 50 ? "너무 잘했어!" : "좋았어! 다시 도전해보자!";
-      questionEl.textContent = `🎉 ${praise} 최종 점수 ${score}점`;
-      messageEl.textContent = "모드 버튼을 누르면 새 게임이 시작돼요.";
-      messageEl.className = "message ok";
-      locked = true;
+    function getStarCount() {
+      if (state.correct >= 9) return 3;
+      if (state.correct >= 7) return 2;
+      if (state.correct >= 4) return 1;
+      return 0;
+    }
+
+    function appendDigit(digit) {
+      if (state.locked || state.finished) return;
+      if (state.answerText.length >= 3) return;
+      state.answerText = state.answerText === "0" ? digit : `${state.answerText}${digit}`;
+      state.message = "좋아, 확인을 눌러보자.";
+      state.messageType = "";
+      state.mascotCheering = false;
+      render();
+    }
+
+    function backspaceAnswer() {
+      if (state.locked || state.finished) return;
+      state.answerText = state.answerText.slice(0, -1);
+      render();
+    }
+
+    function clearAnswer() {
+      if (state.locked || state.finished) return;
+      state.answerText = "";
+      state.message = "천천히 다시 눌러도 괜찮아.";
+      state.messageType = "";
+      state.mascotCheering = false;
+      render();
+    }
+
+    function playTone(kind) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+
+      try {
+        const context = new AudioContext();
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+
+        oscillator.type = "sine";
+        oscillator.frequency.value = kind === "good" ? 660 : 240;
+        gain.gain.setValueAtTime(0.001, context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.12, context.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.18);
+        oscillator.start();
+        oscillator.stop(context.currentTime + 0.2);
+      } catch {
+        // Some browsers block audio until they decide a tap is user activation.
+      }
     }
 
     function checkAnswer() {
-      if (locked) return;
-      const val = Number(answerInput.value);
-      if (Number.isNaN(val)) {
-        messageEl.textContent = "숫자를 입력해줘!";
-        messageEl.className = "message bad";
+      if (state.locked || state.finished) return;
+      if (!state.answerText) {
+        state.message = "답을 먼저 눌러줘.";
+        state.messageType = "bad";
+        render();
         return;
       }
 
-      if (val === currentAnswer) {
-        streak += 1;
-        const bonus = 10 + Math.min(10, streak);
-        score += bonus;
-        messageEl.textContent = `정답! 👏 (+${bonus}점)`;
-        messageEl.className = "message ok";
+      const guess = Number(state.answerText);
+      state.attempts += 1;
+
+      if (guess === state.current.answer) {
+        const firstTry = state.attempts === 1;
+        const hintCost = state.hintOpen ? 2 : 0;
+        const basePoints = firstTry ? 10 + Math.min(state.streak, 5) : 6;
+        const points = Math.max(4, basePoints - hintCost);
+
+        state.score += points;
+        state.correct += 1;
+        state.streak = firstTry ? state.streak + 1 : 1;
+        state.locked = true;
+        state.mascotCheering = true;
+        state.message = firstTry ? `잘했어! 한 번에 맞았어. ${points}점!` : `잘했어! 끝까지 생각해서 맞혔어. ${points}점!`;
+        state.messageType = "good";
+        playTone("good");
+      } else if (state.attempts < 2) {
+        state.streak = 0;
+        state.answerText = "";
+        state.message = guess < state.current.answer ? "조금 더 큰 수야. 한 번 더!" : "조금 더 작은 수야. 한 번 더!";
+        state.messageType = "bad";
+        playTone("bad");
       } else {
-        streak = 0;
-        messageEl.textContent = `조금 아쉬워! 정답은 ${currentAnswer} 야.`;
-        messageEl.className = "message bad";
+        state.streak = 0;
+        state.locked = true;
+        state.message = `정답은 ${state.current.answer}. 다음 문제에서 다시 해보자.`;
+        state.messageType = "bad";
+        playTone("bad");
       }
 
-      locked = true;
-      updateStats();
+      render();
     }
 
     function nextQuestion() {
-      if (!locked) {
-        messageEl.textContent = "먼저 정답 확인을 눌러줘!";
-        messageEl.className = "message bad";
+      if (!state.locked) {
+        state.message = "확인을 먼저 눌러줘.";
+        state.messageType = "bad";
+        render();
         return;
       }
 
-      if (qIndex >= totalQuestions) {
-        finishRound();
+      if (state.questionNumber >= TOTAL_QUESTIONS) {
+        finishGame();
         return;
       }
 
-      qIndex += 1;
-      updateStats();
+      state.questionNumber += 1;
       makeQuestion();
     }
 
-    function resetGame(newMode) {
-      mode = newMode;
-      qIndex = 1;
-      score = 0;
-      streak = 0;
-      updateStats();
-      makeQuestion();
+    function finishGame() {
+      state.finished = true;
+      state.locked = true;
+      const oldBest = state.best;
 
-      modeButtons.forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.mode === mode);
+      if (state.score > state.best) {
+        state.best = state.score;
+        saveSettings();
+      }
+
+      const starCount = getStarCount();
+      const resultLine = state.score > oldBest
+        ? `새 최고기록 ${state.score}점. ${state.correct}문제를 맞혔어요.`
+        : `${state.score}점. ${state.correct}문제를 맞혔어요.`;
+
+      els.resultTitle.textContent = starCount === 3 ? "오늘 정말 반짝였어" : "오늘 연습 끝";
+      els.resultText.textContent = resultLine;
+      els.resultStars.textContent = "★".repeat(starCount) + "☆".repeat(3 - starCount);
+      els.resultPanel.hidden = false;
+      render();
+      els.resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function openHint() {
+      if (state.finished || !state.current) return;
+      state.hintOpen = true;
+      state.message = "그림을 세어보고 답을 눌러봐.";
+      state.messageType = "";
+      render();
+    }
+
+    function renderHint() {
+      els.counterRow.replaceChildren();
+      if (!state.hintOpen || !state.current) {
+        els.hintArea.hidden = true;
+        return;
+      }
+
+      const { a, b, mode } = state.current;
+      els.hintArea.hidden = false;
+      els.hintTitle.textContent = mode === "add"
+        ? `${a}개와 ${b}개를 함께 세어봐.`
+        : `${a}개에서 ${b}개를 빼고 남은 걸 세어봐.`;
+
+      const totalCounters = mode === "add" ? a + b : a;
+      for (let i = 0; i < totalCounters; i += 1) {
+        const counter = document.createElement("span");
+        counter.className = "counter";
+        if (mode === "add" && i >= a) counter.classList.add("second");
+        if (mode === "sub" && i < b) counter.classList.add("removed");
+        els.counterRow.append(counter);
+      }
+    }
+
+    function render() {
+      const mode = MODES[state.mode];
+      const level = LEVELS[state.level];
+      const completed = state.finished ? TOTAL_QUESTIONS : state.questionNumber - (state.locked ? 0 : 1);
+      const progress = Math.max(0, Math.min(100, (completed / TOTAL_QUESTIONS) * 100));
+
+      els.bestPill.textContent = `최고 ${state.best}점`;
+      els.roundInfo.textContent = `${Math.min(state.questionNumber, TOTAL_QUESTIONS)} / ${TOTAL_QUESTIONS}`;
+      els.modeInfo.textContent = `${mode.label} · ${level.label}`;
+      els.progressBar.style.width = `${progress}%`;
+      els.streakInfo.textContent = `연속 정답 ${state.streak}`;
+      els.attemptBadge.textContent = state.locked ? "풀이 완료" : state.attempts === 0 ? "첫 번째 도전" : "두 번째 도전";
+
+      if (state.current) {
+        const questionMode = MODES[state.current.mode];
+        els.questionText.textContent = `${state.current.a} ${questionMode.symbol} ${state.current.b}`;
+      }
+
+      els.answerDisplay.textContent = state.answerText || "답을 눌러요";
+      els.answerDisplay.classList.toggle("has-value", Boolean(state.answerText));
+      els.mascotStage.hidden = false;
+      els.mascotStage.classList.toggle("is-cheering", state.mascotCheering);
+      els.mascotStage.classList.toggle("is-ready", !state.mascotCheering);
+      els.mascotStage.setAttribute("aria-hidden", "false");
+      els.mascotSpeech.textContent = state.mascotCheering ? "잘했어!" : "같이 풀자!";
+      els.message.textContent = state.message;
+      els.message.className = `message ${state.messageType}`.trim();
+      els.scoreInfo.textContent = state.score;
+      els.correctInfo.textContent = state.correct;
+      els.starInfo.textContent = getStarCount();
+      els.checkButton.disabled = state.locked || state.finished;
+      els.nextButton.disabled = !state.locked || state.finished;
+      els.hintButton.disabled = state.finished;
+
+      els.modeButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode));
       });
+      els.levelButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.level === state.level));
+      });
+      els.keys.forEach((button) => {
+        button.disabled = state.locked || state.finished;
+      });
+
+      renderHint();
     }
 
-    checkBtn.addEventListener("click", checkAnswer);
-    nextBtn.addEventListener("click", nextQuestion);
-
-    answerInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        if (locked) nextQuestion();
-        else checkAnswer();
-      }
+    els.modeButtons.forEach((button) => {
+      button.addEventListener("click", () => resetGame(button.dataset.mode, state.level));
     });
 
-    modeButtons.forEach((btn) => {
-      btn.addEventListener("click", () => resetGame(btn.dataset.mode));
+    els.levelButtons.forEach((button) => {
+      button.addEventListener("click", () => resetGame(state.mode, button.dataset.level));
+    });
+
+    els.keys.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.dataset.key) appendDigit(button.dataset.key);
+        if (button.dataset.action === "backspace") backspaceAnswer();
+        if (button.dataset.action === "clear") clearAnswer();
+      });
+    });
+
+    els.hintButton.addEventListener("click", openHint);
+    els.checkButton.addEventListener("click", checkAnswer);
+    els.nextButton.addEventListener("click", nextQuestion);
+    els.restartButton.addEventListener("click", () => resetGame(state.mode, state.level));
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key >= "0" && event.key <= "9") appendDigit(event.key);
+      if (event.key === "Backspace") backspaceAnswer();
+      if (event.key === "Enter") {
+        if (state.locked) nextQuestion();
+        else checkAnswer();
+      }
     });
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").catch(() => {
-          // Service worker registration can fail on local file protocol.
+          // Service workers are unavailable when opened directly from the file system.
         });
       });
     }
 
-    resetGame("add");
+    const storedState = readStoredState();
+    state.best = Number(storedState.best) || 0;
+    if (MODES[storedState.mode]) state.mode = storedState.mode;
+    if (LEVELS[storedState.level]) state.level = storedState.level;
+    resetGame(state.mode, state.level);
   </script>
 </body>
 </html>

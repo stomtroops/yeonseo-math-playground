@@ -1,16 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="연서의 연산 놀이터 아이콘">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ffe8f3"/>
-      <stop offset="100%" stop-color="#ffd0e6"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff0f7"/>
+      <stop offset="55%" stop-color="#ffe3f1"/>
+      <stop offset="100%" stop-color="#f2e9ff"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="110" fill="url(#g)"/>
-  <circle cx="256" cy="290" r="128" fill="#fff"/>
-  <circle cx="212" cy="286" r="12" fill="#4d3550"/>
-  <circle cx="300" cy="286" r="12" fill="#4d3550"/>
-  <ellipse cx="256" cy="322" rx="20" ry="12" fill="#ff7fb5"/>
-  <path d="M160 194c26-45 78-60 113-24 39-37 90-22 118 25-26 7-51 24-66 49h-99c-14-25-39-42-66-50z" fill="#ff7fb5"/>
-  <path d="M144 184l30 26 34-20-11 37 29 26-37-2-11 35-12-35-37 2 30-26z" fill="#fff"/>
-  <text x="256" y="460" text-anchor="middle" font-size="56" font-family="Arial Rounded MT Bold, sans-serif" fill="#d94885">1+1</text>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M162 214c-42-64-42-121-13-132 27-10 61 39 76 118" fill="#ff9cc2" stroke="#5b3349" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M350 214c42-64 42-121 13-132-27-10-61 39-76 118" fill="#ff9cc2" stroke="#5b3349" stroke-width="16" stroke-linejoin="round"/>
+  <ellipse cx="256" cy="288" rx="154" ry="146" fill="#ff80ab" stroke="#5b3349" stroke-width="16"/>
+  <ellipse cx="256" cy="308" rx="122" ry="116" fill="#fff8fc" stroke="#5b3349" stroke-width="14"/>
+  <circle cx="190" cy="338" r="19" fill="#ffbfd6"/>
+  <circle cx="322" cy="338" r="19" fill="#ffbfd6"/>
+  <circle cx="214" cy="298" r="14" fill="#4a2a3c"/>
+  <circle cx="298" cy="298" r="14" fill="#4a2a3c"/>
+  <circle cx="209" cy="293" r="5" fill="#fff8fc"/>
+  <circle cx="293" cy="293" r="5" fill="#fff8fc"/>
+  <path d="M244 330c8 8 16 8 24 0" fill="none" stroke="#5b3349" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="256" cy="318" rx="13" ry="10" fill="#ff7f73"/>
+  <path d="M184 410h144" stroke="#ffc94d" stroke-width="26" stroke-linecap="round"/>
+  <text x="256" y="176" text-anchor="middle" font-size="70" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="800" fill="#fff8fc">7+</text>
 </svg>
