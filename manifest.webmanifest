@@ -1,7 +1,7 @@
 {
-  "name": "연서의 연산 놀이터",
-  "short_name": "연서연산",
-  "description": "7살 연서를 위한 분홍 토끼 연산 연습 앱",
+  "name": "연서의 7세 사고력 놀이터",
+  "short_name": "연서사고력",
+  "description": "7살 연서를 위한 사고력 수학 연습 앱",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
