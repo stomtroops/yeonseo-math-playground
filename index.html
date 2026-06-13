@@ -243,16 +243,23 @@
       word-break: keep-all;
     }
 
+    .answer-mode-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.38fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
     .answer-display {
-      min-height: 68px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-height: 290px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 10px;
+      padding: 12px;
       border-radius: var(--radius);
       border: 2px solid var(--line);
       background: #ffffff;
       color: var(--muted);
-      font-size: 2.2rem;
       font-weight: 1000;
       font-variant-numeric: tabular-nums;
     }
@@ -261,6 +268,28 @@
       color: var(--coral);
       border-color: var(--coral);
       background: var(--coral-soft);
+    }
+
+    .answer-label {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      line-height: 1.15;
+    }
+
+    .mode-card {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius);
+      border: 2px solid var(--line);
+      background: linear-gradient(180deg, #ffffff 0%, #fff6fb 100%);
+    }
+
+    .mode-card .mode-grid {
+      flex: 1;
     }
 
     .mascot-stage {
@@ -645,14 +674,16 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
+      min-height: 0;
     }
 
     .choice-button {
-      min-height: 76px;
+      min-height: 112px;
       background: #ffffff;
       border: 2px solid #ffcfe3;
       color: #5b3349;
-      font-size: 2rem;
+      font-size: 4.4rem;
+      line-height: 1;
       box-shadow: 0 6px 0 #ffcfe3;
       font-variant-numeric: tabular-nums;
     }
@@ -784,21 +815,9 @@
 
       .control-panel {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         align-items: start;
-      }
-
-      .control-panel > div:nth-child(1),
-      .control-panel > div:nth-child(2),
-      .score-grid,
-      .mission-card,
-      .actions {
-        grid-column: 1;
-      }
-
-      .choice-panel {
-        grid-column: 2;
-        grid-row: 1 / span 4;
+        align-content: start;
       }
     }
 
@@ -848,25 +867,41 @@
       }
 
       .question-zone {
-        gap: 10px;
+        gap: 8px;
       }
 
       .question {
-        min-height: 96px;
-        font-size: 3.6rem;
+        min-height: 88px;
+        font-size: 3.4rem;
       }
 
       .question.word-problem {
-        font-size: 2.65rem;
+        font-size: 2.35rem;
       }
 
       .answer-display {
-        min-height: 58px;
-        font-size: 1.9rem;
+        min-height: 236px;
+        padding: 9px;
+        gap: 7px;
+      }
+
+      .answer-label {
+        min-height: 28px;
+        font-size: 0.95rem;
+      }
+
+      .mode-card {
+        padding: 8px;
+      }
+
+      .mode-card .segment-button {
+        min-height: 39px;
+        padding: 4px;
+        font-size: 0.84rem;
       }
 
       .mascot-stage {
-        min-height: 94px;
+        min-height: 84px;
         padding-top: 4px;
       }
 
@@ -889,19 +924,14 @@
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-areas:
-          "mode choices"
-          "level choices"
-          "score choices"
+          "level score"
           "mission actions";
         align-items: start;
+        align-content: start;
         gap: 7px;
       }
 
       .control-panel > div:nth-child(1) {
-        grid-area: mode;
-      }
-
-      .control-panel > div:nth-child(2) {
         grid-area: level;
       }
 
@@ -912,11 +942,6 @@
       .mission-card {
         grid-area: mission;
         padding: 8px;
-      }
-
-      .choice-panel {
-        grid-area: choices;
-        gap: 8px;
       }
 
       .actions {
@@ -932,8 +957,8 @@
       }
 
       .choice-button {
-        min-height: 84px;
-        font-size: 1.75rem;
+        min-height: 88px;
+        font-size: 3.4rem;
       }
 
       .score-item {
@@ -1017,8 +1042,7 @@
       }
 
       .answer-display {
-        min-height: 66px;
-        font-size: 1.7rem;
+        min-height: 246px;
       }
 
       .mascot-stage {
@@ -1047,9 +1071,17 @@
         flex-direction: column;
       }
 
+      .answer-mode-row {
+        grid-template-columns: 1fr;
+      }
+
+      .mode-card .mode-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .choice-button {
-        min-height: 58px;
-        font-size: 1.55rem;
+        min-height: 86px;
+        font-size: 3rem;
       }
 
       .actions {
@@ -1099,7 +1131,24 @@
         <div class="question-zone">
           <h2 class="sr-only" id="questionHeading">문제</h2>
           <div class="question" id="questionText">0 + 0</div>
-          <div class="answer-display" id="answerDisplay" aria-live="polite">답을 눌러요</div>
+          <div class="answer-mode-row">
+            <div class="answer-display" id="answerDisplay" aria-live="polite">
+              <span class="answer-label" id="answerLabel">답을 골라요</span>
+              <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
+            </div>
+
+            <div class="mode-card">
+              <p class="control-title">오늘의 영역</p>
+              <div class="segmented mode-grid" id="modeButtons">
+                <button class="segment-button" type="button" data-mode="add" aria-pressed="true">덧셈</button>
+                <button class="segment-button" type="button" data-mode="sub" aria-pressed="false">뺄셈</button>
+                <button class="segment-button" type="button" data-mode="compose" aria-pressed="false">모으기</button>
+                <button class="segment-button" type="button" data-mode="missing" aria-pressed="false">빈칸</button>
+                <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
+                <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
+              </div>
+            </div>
+          </div>
 
           <div class="mascot-stage is-ready" id="mascotStage" aria-live="polite">
             <div class="speech-bubble" id="mascotSpeech">같이 풀자!</div>
@@ -1149,19 +1198,7 @@
         </div>
       </section>
 
-      <aside class="control-panel" aria-label="사고력 영역 설정과 답 선택">
-        <div>
-          <p class="control-title">오늘의 영역</p>
-          <div class="segmented mode-grid" id="modeButtons">
-            <button class="segment-button" type="button" data-mode="add" aria-pressed="true">덧셈</button>
-            <button class="segment-button" type="button" data-mode="sub" aria-pressed="false">뺄셈</button>
-            <button class="segment-button" type="button" data-mode="compose" aria-pressed="false">모으기</button>
-            <button class="segment-button" type="button" data-mode="missing" aria-pressed="false">빈칸</button>
-            <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
-            <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
-          </div>
-        </div>
-
+      <aside class="control-panel" aria-label="난이도와 미션">
         <div>
           <p class="control-title">난이도</p>
           <div class="segmented" id="levelButtons">
@@ -1210,8 +1247,6 @@
           </div>
           <div class="sticker-board" id="stickerBoard" aria-label="오늘 모은 별스티커"></div>
         </div>
-
-        <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
 
         <div class="actions">
           <button class="action-button hint" type="button" id="hintButton">힌트</button>
@@ -1286,6 +1321,7 @@
       streakInfo: document.getElementById("streakInfo"),
       questionText: document.getElementById("questionText"),
       answerDisplay: document.getElementById("answerDisplay"),
+      answerLabel: document.getElementById("answerLabel"),
       hintArea: document.getElementById("hintArea"),
       hintTitle: document.getElementById("hintTitle"),
       counterRow: document.getElementById("counterRow"),
@@ -1799,7 +1835,7 @@
         els.questionText.classList.toggle("word-problem", state.current.isWord);
       }
 
-      els.answerDisplay.textContent = state.answerText || "답을 골라요";
+      els.answerLabel.textContent = state.answerText ? `고른 답 ${state.answerText}` : "답을 골라요";
       els.answerDisplay.classList.toggle("has-value", Boolean(state.answerText));
       els.mascotStage.hidden = false;
       els.mascotStage.classList.toggle("is-cheering", state.mascotCheering);
