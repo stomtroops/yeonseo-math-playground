@@ -560,6 +560,87 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .mission-card {
+      padding: 10px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #ffffff 0%, #fff6fb 100%);
+    }
+
+    .mission-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-weight: 1000;
+    }
+
+    .mission-head strong {
+      color: var(--teal-dark);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .mission-list {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 9px;
+    }
+
+    .mission-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .mission-meter {
+      grid-column: 1 / -1;
+      height: 9px;
+      margin-top: 3px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #f6ddeb;
+    }
+
+    .mission-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--teal), var(--sun));
+      transition: width 220ms ease;
+    }
+
+    .sticker-board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .sticker {
+      min-height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: #e3bdd0;
+      font-size: 1.08rem;
+      font-weight: 1000;
+    }
+
+    .sticker.earned {
+      background: var(--sun-soft);
+      border-color: #f3c85d;
+      color: #f2a900;
+      box-shadow: inset 0 -3px 0 rgba(242, 169, 0, 0.14);
+    }
+
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -694,6 +775,7 @@
       .control-panel > div:nth-child(1),
       .control-panel > div:nth-child(2),
       .score-grid,
+      .mission-card,
       .actions {
         grid-column: 1;
       }
@@ -701,6 +783,182 @@
       .keypad {
         grid-column: 2;
         grid-row: 1 / span 4;
+      }
+    }
+
+    @media (min-width: 901px) and (max-height: 820px) {
+      .app {
+        gap: 8px;
+        padding: calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
+      }
+
+      .topbar {
+        padding: 8px 12px;
+      }
+
+      .brand img {
+        width: 44px;
+        height: 44px;
+      }
+
+      h1 {
+        font-size: 1.34rem;
+      }
+
+      .best-pill {
+        min-height: 38px;
+      }
+
+      .progress-strip {
+        padding: 6px 10px;
+      }
+
+      .progress-meta {
+        margin-bottom: 6px;
+        font-size: 0.84rem;
+      }
+
+      .workspace {
+        gap: 8px;
+      }
+
+      .practice-panel {
+        min-height: 450px;
+        padding: 12px;
+      }
+
+      .status-row {
+        margin-bottom: 8px;
+      }
+
+      .question-zone {
+        gap: 10px;
+      }
+
+      .question {
+        min-height: 96px;
+        font-size: 3.6rem;
+      }
+
+      .question.word-problem {
+        font-size: 2.65rem;
+      }
+
+      .answer-display {
+        min-height: 58px;
+        font-size: 1.9rem;
+      }
+
+      .mascot-stage {
+        min-height: 94px;
+        padding-top: 4px;
+      }
+
+      .speech-bubble {
+        padding: 9px 12px;
+        font-size: 1.18rem;
+      }
+
+      .bunny-mascot {
+        max-width: 138px;
+      }
+
+      .hint-area {
+        min-height: 96px;
+        padding: 10px;
+      }
+
+      .control-panel {
+        padding: 10px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+          "mode keys"
+          "level keys"
+          "score keys"
+          "mission actions";
+        align-items: start;
+        gap: 7px;
+      }
+
+      .control-panel > div:nth-child(1) {
+        grid-area: mode;
+      }
+
+      .control-panel > div:nth-child(2) {
+        grid-area: level;
+      }
+
+      .score-grid {
+        grid-area: score;
+      }
+
+      .mission-card {
+        grid-area: mission;
+        padding: 8px;
+      }
+
+      .keypad {
+        grid-area: keys;
+        gap: 6px;
+      }
+
+      .actions {
+        grid-area: actions;
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .segment-button,
+      .action-button,
+      .key {
+        min-height: 42px;
+      }
+
+      .key {
+        min-height: 46px;
+        font-size: 1.35rem;
+      }
+
+      .score-item {
+        min-height: 46px;
+        padding: 6px;
+      }
+
+      .score-item span {
+        font-size: 0.72rem;
+      }
+
+      .score-item strong {
+        font-size: 1.1rem;
+      }
+
+      .mission-head {
+        margin-bottom: 6px;
+      }
+
+      .mission-list {
+        gap: 4px;
+        margin-bottom: 7px;
+      }
+
+      .mission-row {
+        gap: 5px;
+        font-size: 0.74rem;
+      }
+
+      .mission-meter {
+        height: 7px;
+        margin-top: 2px;
+      }
+
+      .sticker-board {
+        gap: 4px;
+      }
+
+      .sticker {
+        min-height: 24px;
+        font-size: 0.95rem;
       }
     }
 
@@ -879,7 +1137,9 @@
         <div>
           <p class="control-title">오늘의 영역</p>
           <div class="segmented mode-grid" id="modeButtons">
-            <button class="segment-button" type="button" data-mode="compose" aria-pressed="true">모으기</button>
+            <button class="segment-button" type="button" data-mode="add" aria-pressed="true">덧셈</button>
+            <button class="segment-button" type="button" data-mode="sub" aria-pressed="false">뺄셈</button>
+            <button class="segment-button" type="button" data-mode="compose" aria-pressed="false">모으기</button>
             <button class="segment-button" type="button" data-mode="missing" aria-pressed="false">빈칸</button>
             <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
             <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
@@ -908,6 +1168,31 @@
             <span>별</span>
             <strong id="starInfo">0</strong>
           </div>
+        </div>
+
+        <div class="mission-card" aria-label="오늘 미션과 별스티커">
+          <div class="mission-head">
+            <span>오늘 미션</span>
+            <strong id="missionDate">오늘</strong>
+          </div>
+          <div class="mission-list">
+            <div class="mission-row">
+              <span>5문제 풀기</span>
+              <strong id="solvedMissionInfo">0 / 5</strong>
+              <div class="mission-meter" aria-hidden="true"><div class="mission-fill" id="solvedMissionFill"></div></div>
+            </div>
+            <div class="mission-row">
+              <span>3문제 맞히기</span>
+              <strong id="correctMissionInfo">0 / 3</strong>
+              <div class="mission-meter" aria-hidden="true"><div class="mission-fill" id="correctMissionFill"></div></div>
+            </div>
+            <div class="mission-row">
+              <span>별스티커 5개</span>
+              <strong id="stickerMissionInfo">0 / 5</strong>
+              <div class="mission-meter" aria-hidden="true"><div class="mission-fill" id="stickerMissionFill"></div></div>
+            </div>
+          </div>
+          <div class="sticker-board" id="stickerBoard" aria-label="오늘 모은 별스티커"></div>
         </div>
 
         <div class="keypad" aria-label="숫자 키패드">
@@ -945,9 +1230,17 @@
 
   <script>
     const TOTAL_QUESTIONS = 10;
-    const STORAGE_KEY = "yeonseo-math-state-v2";
+    const STORAGE_KEY = "yeonseo-math-state-v3";
+    const DAILY_MISSIONS = {
+      solved: 5,
+      correct: 3,
+      stickers: 5
+    };
+    const STICKER_BOARD_SIZE = 10;
 
     const MODES = {
+      add: { label: "덧셈", topic: "기초 연산" },
+      sub: { label: "뺄셈", topic: "기초 연산" },
       compose: { label: "모으기", topic: "수 가르기" },
       missing: { label: "빈칸", topic: "숨은 수" },
       pattern: { label: "규칙", topic: "다음 수" },
@@ -961,7 +1254,7 @@
     };
 
     const state = {
-      mode: "compose",
+      mode: "add",
       level: "easy",
       questionNumber: 1,
       score: 0,
@@ -976,6 +1269,8 @@
       message: "연서야, 같이 풀자!",
       messageType: "",
       best: 0,
+      daily: {},
+      todayKey: "",
       current: null,
       lastQuestionKey: ""
     };
@@ -998,6 +1293,14 @@
       scoreInfo: document.getElementById("scoreInfo"),
       correctInfo: document.getElementById("correctInfo"),
       starInfo: document.getElementById("starInfo"),
+      missionDate: document.getElementById("missionDate"),
+      solvedMissionInfo: document.getElementById("solvedMissionInfo"),
+      solvedMissionFill: document.getElementById("solvedMissionFill"),
+      correctMissionInfo: document.getElementById("correctMissionInfo"),
+      correctMissionFill: document.getElementById("correctMissionFill"),
+      stickerMissionInfo: document.getElementById("stickerMissionInfo"),
+      stickerMissionFill: document.getElementById("stickerMissionFill"),
+      stickerBoard: document.getElementById("stickerBoard"),
       modeButtons: [...document.querySelectorAll("[data-mode]")],
       levelButtons: [...document.querySelectorAll("[data-level]")],
       keys: [...document.querySelectorAll("[data-key], [data-action]")],
@@ -1020,10 +1323,12 @@
     }
 
     function saveSettings() {
+      pruneDailyRecords();
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         best: state.best,
         mode: state.mode,
-        level: state.level
+        level: state.level,
+        daily: state.daily
       }));
     }
 
@@ -1031,8 +1336,84 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    function getTodayKey() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatDateLabel(dateKey) {
+      const [, month, day] = dateKey.split("-");
+      return `${Number(month)}월 ${Number(day)}일`;
+    }
+
+    function makeDailyRecord() {
+      return {
+        solved: 0,
+        correct: 0,
+        stickers: 0
+      };
+    }
+
+    function ensureTodayRecord() {
+      state.todayKey = getTodayKey();
+      if (!state.daily || typeof state.daily !== "object") state.daily = {};
+      if (!state.daily[state.todayKey]) state.daily[state.todayKey] = makeDailyRecord();
+      return state.daily[state.todayKey];
+    }
+
+    function pruneDailyRecords() {
+      if (!state.daily || typeof state.daily !== "object") return;
+      const keys = Object.keys(state.daily).sort().slice(-14);
+      state.daily = keys.reduce((records, key) => {
+        records[key] = state.daily[key];
+        return records;
+      }, {});
+    }
+
+    function recordProblemResult(isCorrect) {
+      const record = ensureTodayRecord();
+      record.solved += 1;
+      if (isCorrect) {
+        record.correct += 1;
+        record.stickers += 1;
+      }
+      saveSettings();
+    }
+
     function makeHint(title, tokens) {
       return { title, tokens };
+    }
+
+    function buildAddQuestion(level) {
+      const a = randInt(0, level.max);
+      let b = randInt(0, level.max - a);
+      if (a === 0 && b === 0) b = 1;
+      const answer = a + b;
+      return {
+        mode: "add",
+        text: `${a} + ${b}`,
+        answer,
+        key: `add-${a}-${b}`,
+        isWord: false,
+        hint: makeHint("두 수를 함께 모아 세어 봐.", [a, "+", b, "=", "?"])
+      };
+    }
+
+    function buildSubQuestion(level) {
+      const a = randInt(1, level.max);
+      const b = randInt(0, a);
+      const answer = a - b;
+      return {
+        mode: "sub",
+        text: `${a} - ${b}`,
+        answer,
+        key: `sub-${a}-${b}`,
+        isWord: false,
+        hint: makeHint(`${a}에서 ${b}만큼 덜어내면 몇일까?`, [a, "-", b, "=", "?"])
+      };
     }
 
     function buildComposeQuestion(level) {
@@ -1139,6 +1520,8 @@
 
     function buildQuestion(level) {
       const builders = {
+        add: buildAddQuestion,
+        sub: buildSubQuestion,
         compose: buildComposeQuestion,
         missing: buildMissingQuestion,
         pattern: buildPatternQuestion,
@@ -1262,6 +1645,7 @@
         state.streak = firstTry ? state.streak + 1 : 1;
         state.locked = true;
         state.mascotCheering = true;
+        recordProblemResult(true);
         state.message = firstTry ? `잘했어! 한 번에 맞았어. ${points}점!` : `잘했어! 끝까지 생각해서 맞혔어. ${points}점!`;
         state.messageType = "good";
         playTone("good");
@@ -1274,6 +1658,7 @@
       } else {
         state.streak = 0;
         state.locked = true;
+        recordProblemResult(false);
         state.message = `정답은 ${state.current.answer}. 다음 문제에서 다시 해보자.`;
         state.messageType = "bad";
         playTone("bad");
@@ -1393,6 +1778,29 @@
       });
 
       renderHint();
+      renderDailyMission();
+    }
+
+    function setMissionProgress(infoEl, fillEl, value, target) {
+      const capped = Math.min(value, target);
+      infoEl.textContent = `${capped} / ${target}`;
+      fillEl.style.width = `${Math.round((capped / target) * 100)}%`;
+    }
+
+    function renderDailyMission() {
+      const record = ensureTodayRecord();
+      els.missionDate.textContent = formatDateLabel(state.todayKey);
+      setMissionProgress(els.solvedMissionInfo, els.solvedMissionFill, record.solved, DAILY_MISSIONS.solved);
+      setMissionProgress(els.correctMissionInfo, els.correctMissionFill, record.correct, DAILY_MISSIONS.correct);
+      setMissionProgress(els.stickerMissionInfo, els.stickerMissionFill, record.stickers, DAILY_MISSIONS.stickers);
+
+      els.stickerBoard.replaceChildren();
+      for (let i = 0; i < STICKER_BOARD_SIZE; i += 1) {
+        const sticker = document.createElement("span");
+        sticker.className = i < record.stickers ? "sticker earned" : "sticker";
+        sticker.textContent = i < record.stickers ? "★" : "☆";
+        els.stickerBoard.append(sticker);
+      }
     }
 
     els.modeButtons.forEach((button) => {
@@ -1437,6 +1845,8 @@
     state.best = Number(storedState.best) || 0;
     if (MODES[storedState.mode]) state.mode = storedState.mode;
     if (LEVELS[storedState.level]) state.level = storedState.level;
+    state.daily = storedState.daily && typeof storedState.daily === "object" ? storedState.daily : {};
+    ensureTodayRecord();
     resetGame(state.mode, state.level);
   </script>
 </body>
