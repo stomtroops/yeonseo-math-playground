@@ -84,6 +84,7 @@
     }
 
     .topbar,
+    .mode-strip,
     .progress-strip,
     .practice-panel,
     .control-panel,
@@ -100,6 +101,23 @@
       justify-content: space-between;
       gap: 14px;
       padding: 12px 14px;
+    }
+
+    .mode-strip {
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mode-strip .control-title {
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .mode-strip .mode-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 
     .brand {
@@ -243,13 +261,6 @@
       word-break: keep-all;
     }
 
-    .answer-mode-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.38fr);
-      gap: 10px;
-      align-items: stretch;
-    }
-
     .answer-display {
       min-height: 290px;
       display: grid;
@@ -277,19 +288,6 @@
       justify-content: center;
       font-size: 1.15rem;
       line-height: 1.15;
-    }
-
-    .mode-card {
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      border-radius: var(--radius);
-      border: 2px solid var(--line);
-      background: linear-gradient(180deg, #ffffff 0%, #fff6fb 100%);
-    }
-
-    .mode-card .mode-grid {
-      flex: 1;
     }
 
     .mascot-stage {
@@ -524,6 +522,10 @@
 
     .segmented.mode-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mode-strip .segmented.mode-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 
     .segment-button,
@@ -848,6 +850,17 @@
         padding: 6px 10px;
       }
 
+      .mode-strip {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+
+      .mode-strip .segment-button {
+        min-height: 38px;
+        padding: 4px;
+        font-size: 0.84rem;
+      }
+
       .progress-meta {
         margin-bottom: 6px;
         font-size: 0.84rem;
@@ -890,18 +903,8 @@
         font-size: 0.95rem;
       }
 
-      .mode-card {
-        padding: 8px;
-      }
-
-      .mode-card .segment-button {
-        min-height: 39px;
-        padding: 4px;
-        font-size: 0.84rem;
-      }
-
       .mascot-stage {
-        min-height: 84px;
+        min-height: 62px;
         padding-top: 4px;
       }
 
@@ -911,7 +914,7 @@
       }
 
       .bunny-mascot {
-        max-width: 138px;
+        max-width: 104px;
       }
 
       .hint-area {
@@ -1012,6 +1015,14 @@
         align-items: flex-start;
       }
 
+      .mode-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .mode-strip .mode-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .brand img {
         width: 50px;
         height: 50px;
@@ -1071,14 +1082,6 @@
         flex-direction: column;
       }
 
-      .answer-mode-row {
-        grid-template-columns: 1fr;
-      }
-
-      .mode-card .mode-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
       .choice-button {
         min-height: 86px;
         font-size: 3rem;
@@ -1111,6 +1114,18 @@
       <div class="best-pill" id="bestPill">최고 0점</div>
     </header>
 
+    <section class="mode-strip" aria-label="오늘의 영역 선택">
+      <p class="control-title">오늘의 영역</p>
+      <div class="segmented mode-grid" id="modeButtons">
+        <button class="segment-button" type="button" data-mode="add" aria-pressed="true">덧셈</button>
+        <button class="segment-button" type="button" data-mode="sub" aria-pressed="false">뺄셈</button>
+        <button class="segment-button" type="button" data-mode="compose" aria-pressed="false">모으기</button>
+        <button class="segment-button" type="button" data-mode="missing" aria-pressed="false">빈칸</button>
+        <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
+        <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
+      </div>
+    </section>
+
     <section class="progress-strip" aria-label="진행 상황">
       <div class="progress-meta">
         <span id="roundInfo">1 / 10</span>
@@ -1131,23 +1146,9 @@
         <div class="question-zone">
           <h2 class="sr-only" id="questionHeading">문제</h2>
           <div class="question" id="questionText">0 + 0</div>
-          <div class="answer-mode-row">
-            <div class="answer-display" id="answerDisplay" aria-live="polite">
-              <span class="answer-label" id="answerLabel">답을 골라요</span>
-              <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
-            </div>
-
-            <div class="mode-card">
-              <p class="control-title">오늘의 영역</p>
-              <div class="segmented mode-grid" id="modeButtons">
-                <button class="segment-button" type="button" data-mode="add" aria-pressed="true">덧셈</button>
-                <button class="segment-button" type="button" data-mode="sub" aria-pressed="false">뺄셈</button>
-                <button class="segment-button" type="button" data-mode="compose" aria-pressed="false">모으기</button>
-                <button class="segment-button" type="button" data-mode="missing" aria-pressed="false">빈칸</button>
-                <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
-                <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
-              </div>
-            </div>
+          <div class="answer-display" id="answerDisplay" aria-live="polite">
+            <span class="answer-label" id="answerLabel">답을 골라요</span>
+            <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
           </div>
 
           <div class="mascot-stage is-ready" id="mascotStage" aria-live="polite">
