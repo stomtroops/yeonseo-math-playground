@@ -499,7 +499,7 @@
 
     .segment-button,
     .action-button,
-    .key {
+    .choice-button {
       min-height: 48px;
       border-radius: var(--radius);
       cursor: pointer;
@@ -523,7 +523,7 @@
 
     .segment-button:active,
     .action-button:active,
-    .key:active {
+    .choice-button:active {
       transform: scale(0.97);
     }
 
@@ -641,30 +641,46 @@
       box-shadow: inset 0 -3px 0 rgba(242, 169, 0, 0.14);
     }
 
-    .keypad {
+    .choice-panel {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 7px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
 
-    .key {
-      min-height: 48px;
+    .choice-button {
+      min-height: 76px;
       background: #ffffff;
       border: 2px solid #ffcfe3;
       color: #5b3349;
-      font-size: 1.55rem;
+      font-size: 2rem;
       box-shadow: 0 6px 0 #ffcfe3;
+      font-variant-numeric: tabular-nums;
     }
 
-    .key.utility {
-      background: var(--sky-soft);
-      color: #6b3fae;
-      font-size: 1rem;
+    .choice-button[aria-pressed="true"] {
+      background: var(--coral-soft);
+      border-color: var(--coral);
+      color: var(--coral);
+      box-shadow: 0 6px 0 rgba(255, 93, 153, 0.26);
+    }
+
+    .choice-button.is-correct {
+      background: #ecfff5;
+      border-color: var(--good);
+      color: var(--good);
+      box-shadow: 0 6px 0 rgba(47, 163, 107, 0.2);
+    }
+
+    .choice-button.is-wrong {
+      background: #fff0f4;
+      border-color: var(--bad);
+      color: var(--bad);
+      box-shadow: 0 6px 0 rgba(226, 61, 109, 0.18);
     }
 
     .actions {
       display: grid;
-      grid-template-columns: 0.9fr 1.25fr 1.1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 7px;
     }
 
@@ -679,12 +695,6 @@
       border-color: #f3c85d;
     }
 
-    .action-button.primary {
-      background: var(--teal);
-      color: #ffffff;
-      box-shadow: 0 8px 0 #d6437e;
-    }
-
     .action-button.next {
       background: var(--coral);
       color: #ffffff;
@@ -692,12 +702,18 @@
     }
 
     .action-button:disabled,
-    .key:disabled {
+    .choice-button:disabled {
       cursor: not-allowed;
       filter: grayscale(0.65);
       opacity: 0.5;
       transform: none;
       box-shadow: none;
+    }
+
+    .choice-button.is-correct:disabled,
+    .choice-button.is-wrong:disabled {
+      filter: none;
+      opacity: 1;
     }
 
     .result-panel {
@@ -780,7 +796,7 @@
         grid-column: 1;
       }
 
-      .keypad {
+      .choice-panel {
         grid-column: 2;
         grid-row: 1 / span 4;
       }
@@ -873,9 +889,9 @@
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-areas:
-          "mode keys"
-          "level keys"
-          "score keys"
+          "mode choices"
+          "level choices"
+          "score choices"
           "mission actions";
         align-items: start;
         gap: 7px;
@@ -898,9 +914,9 @@
         padding: 8px;
       }
 
-      .keypad {
-        grid-area: keys;
-        gap: 6px;
+      .choice-panel {
+        grid-area: choices;
+        gap: 8px;
       }
 
       .actions {
@@ -911,13 +927,13 @@
 
       .segment-button,
       .action-button,
-      .key {
+      .choice-button {
         min-height: 42px;
       }
 
-      .key {
-        min-height: 46px;
-        font-size: 1.35rem;
+      .choice-button {
+        min-height: 84px;
+        font-size: 1.75rem;
       }
 
       .score-item {
@@ -1031,9 +1047,9 @@
         flex-direction: column;
       }
 
-      .key {
+      .choice-button {
         min-height: 58px;
-        font-size: 1.32rem;
+        font-size: 1.55rem;
       }
 
       .actions {
@@ -1129,11 +1145,11 @@
             <div class="counter-row" id="counterRow" aria-hidden="true"></div>
           </div>
 
-          <p class="message" id="message" aria-live="assertive">숫자를 눌러 답을 만들어봐.</p>
+          <p class="message" id="message" aria-live="assertive">맞는 숫자를 골라봐.</p>
         </div>
       </section>
 
-      <aside class="control-panel" aria-label="사고력 영역 설정과 숫자 입력">
+      <aside class="control-panel" aria-label="사고력 영역 설정과 답 선택">
         <div>
           <p class="control-title">오늘의 영역</p>
           <div class="segmented mode-grid" id="modeButtons">
@@ -1195,24 +1211,10 @@
           <div class="sticker-board" id="stickerBoard" aria-label="오늘 모은 별스티커"></div>
         </div>
 
-        <div class="keypad" aria-label="숫자 키패드">
-          <button class="key" type="button" data-key="1">1</button>
-          <button class="key" type="button" data-key="2">2</button>
-          <button class="key" type="button" data-key="3">3</button>
-          <button class="key" type="button" data-key="4">4</button>
-          <button class="key" type="button" data-key="5">5</button>
-          <button class="key" type="button" data-key="6">6</button>
-          <button class="key" type="button" data-key="7">7</button>
-          <button class="key" type="button" data-key="8">8</button>
-          <button class="key" type="button" data-key="9">9</button>
-          <button class="key utility" type="button" data-action="backspace">⌫</button>
-          <button class="key" type="button" data-key="0">0</button>
-          <button class="key utility" type="button" data-action="clear">지움</button>
-        </div>
+        <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
 
         <div class="actions">
           <button class="action-button hint" type="button" id="hintButton">힌트</button>
-          <button class="action-button primary" type="button" id="checkButton">확인</button>
           <button class="action-button next" type="button" id="nextButton" disabled>다음</button>
         </div>
       </aside>
@@ -1301,11 +1303,10 @@
       stickerMissionInfo: document.getElementById("stickerMissionInfo"),
       stickerMissionFill: document.getElementById("stickerMissionFill"),
       stickerBoard: document.getElementById("stickerBoard"),
+      choicePanel: document.getElementById("choicePanel"),
       modeButtons: [...document.querySelectorAll("[data-mode]")],
       levelButtons: [...document.querySelectorAll("[data-level]")],
-      keys: [...document.querySelectorAll("[data-key], [data-action]")],
       hintButton: document.getElementById("hintButton"),
-      checkButton: document.getElementById("checkButton"),
       nextButton: document.getElementById("nextButton"),
       resultPanel: document.getElementById("resultPanel"),
       resultTitle: document.getElementById("resultTitle"),
@@ -1334,6 +1335,38 @@
 
     function randInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffle(items) {
+      const nextItems = [...items];
+      for (let i = nextItems.length - 1; i > 0; i -= 1) {
+        const j = randInt(0, i);
+        [nextItems[i], nextItems[j]] = [nextItems[j], nextItems[i]];
+      }
+      return nextItems;
+    }
+
+    function makeAnswerChoices(answer, level, preferredChoices = []) {
+      const choices = new Set([answer]);
+      const maxChoice = Math.max(level.max, answer + 3, 10);
+      const offsets = [-3, -2, -1, 1, 2, 3, 4, -4, 5, -5];
+
+      preferredChoices.forEach((choice) => {
+        if (Number.isInteger(choice) && choice >= 0) choices.add(choice);
+      });
+
+      offsets.forEach((offset) => {
+        if (choices.size >= 4) return;
+        const candidate = answer + offset;
+        if (candidate >= 0 && candidate <= maxChoice) choices.add(candidate);
+      });
+
+      while (choices.size < 4) {
+        choices.add(randInt(0, maxChoice));
+      }
+
+      const distractors = [...choices].filter((choice) => choice !== answer);
+      return shuffle([answer, ...shuffle(distractors).slice(0, 3)]);
     }
 
     function getTodayKey() {
@@ -1493,6 +1526,7 @@
           answer: big,
           key: `compare-big-${a}-${b}`,
           isWord: true,
+          preferredChoices: [a, b],
           hint: makeHint("두 수를 보고 더 큰 쪽을 골라 봐.", [a, b])
         };
       }
@@ -1504,6 +1538,7 @@
           answer: small,
           key: `compare-small-${a}-${b}`,
           isWord: true,
+          preferredChoices: [a, b],
           hint: makeHint("두 수를 보고 더 작은 쪽을 골라 봐.", [a, b])
         };
       }
@@ -1514,6 +1549,7 @@
         answer: big - small,
         key: `compare-gap-${big}-${small}`,
         isWord: true,
+        preferredChoices: [big, small],
         hint: makeHint("큰 수에서 작은 수까지의 차이를 생각해 봐.", [big, "-", small, "=", "?"])
       };
     }
@@ -1541,6 +1577,7 @@
       }
 
       state.current = nextQuestion;
+      state.current.choices = makeAnswerChoices(nextQuestion.answer, level, nextQuestion.preferredChoices);
       state.lastQuestionKey = nextQuestion.key;
       state.answerText = "";
       state.attempts = 0;
@@ -1574,29 +1611,14 @@
       return 0;
     }
 
-    function appendDigit(digit) {
+    function selectChoice(choice) {
       if (state.locked || state.finished) return;
-      if (state.answerText.length >= 3) return;
-      state.answerText = state.answerText === "0" ? digit : `${state.answerText}${digit}`;
-      state.message = "좋아, 확인을 눌러보자.";
+      state.answerText = String(choice);
+      state.message = "좋아, 같이 확인해보자.";
       state.messageType = "";
       state.mascotCheering = false;
       render();
-    }
-
-    function backspaceAnswer() {
-      if (state.locked || state.finished) return;
-      state.answerText = state.answerText.slice(0, -1);
-      render();
-    }
-
-    function clearAnswer() {
-      if (state.locked || state.finished) return;
-      state.answerText = "";
-      state.message = "천천히 다시 눌러도 괜찮아.";
-      state.messageType = "";
-      state.mascotCheering = false;
-      render();
+      checkAnswer();
     }
 
     function playTone(kind) {
@@ -1625,7 +1647,7 @@
     function checkAnswer() {
       if (state.locked || state.finished) return;
       if (!state.answerText) {
-        state.message = "답을 먼저 눌러줘.";
+        state.message = "답을 먼저 골라줘.";
         state.messageType = "bad";
         render();
         return;
@@ -1733,6 +1755,32 @@
       });
     }
 
+    function renderChoices() {
+      els.choicePanel.replaceChildren();
+      if (!state.current) return;
+
+      state.current.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        const selected = String(choice) === state.answerText;
+        button.type = "button";
+        button.className = "choice-button";
+        button.dataset.choice = String(choice);
+        button.textContent = choice;
+        button.setAttribute("aria-label", `${index + 1}번 보기 ${choice}`);
+        button.setAttribute("aria-pressed", String(selected));
+        button.disabled = state.locked || state.finished;
+
+        if (state.locked && choice === state.current.answer) {
+          button.classList.add("is-correct");
+        } else if (state.locked && selected && choice !== state.current.answer) {
+          button.classList.add("is-wrong");
+        }
+
+        button.addEventListener("click", () => selectChoice(choice));
+        els.choicePanel.append(button);
+      });
+    }
+
     function render() {
       const mode = MODES[state.mode];
       const level = LEVELS[state.level];
@@ -1751,7 +1799,7 @@
         els.questionText.classList.toggle("word-problem", state.current.isWord);
       }
 
-      els.answerDisplay.textContent = state.answerText || "답을 눌러요";
+      els.answerDisplay.textContent = state.answerText || "답을 골라요";
       els.answerDisplay.classList.toggle("has-value", Boolean(state.answerText));
       els.mascotStage.hidden = false;
       els.mascotStage.classList.toggle("is-cheering", state.mascotCheering);
@@ -1763,7 +1811,6 @@
       els.scoreInfo.textContent = state.score;
       els.correctInfo.textContent = state.correct;
       els.starInfo.textContent = getStarCount();
-      els.checkButton.disabled = state.locked || state.finished;
       els.nextButton.disabled = !state.locked || state.finished;
       els.hintButton.disabled = state.finished;
 
@@ -1773,10 +1820,7 @@
       els.levelButtons.forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.level === state.level));
       });
-      els.keys.forEach((button) => {
-        button.disabled = state.locked || state.finished;
-      });
-
+      renderChoices();
       renderHint();
       renderDailyMission();
     }
@@ -1811,25 +1855,18 @@
       button.addEventListener("click", () => resetGame(state.mode, button.dataset.level));
     });
 
-    els.keys.forEach((button) => {
-      button.addEventListener("click", () => {
-        if (button.dataset.key) appendDigit(button.dataset.key);
-        if (button.dataset.action === "backspace") backspaceAnswer();
-        if (button.dataset.action === "clear") clearAnswer();
-      });
-    });
-
     els.hintButton.addEventListener("click", openHint);
-    els.checkButton.addEventListener("click", checkAnswer);
     els.nextButton.addEventListener("click", nextQuestion);
     els.restartButton.addEventListener("click", () => resetGame(state.mode, state.level));
 
     window.addEventListener("keydown", (event) => {
-      if (event.key >= "0" && event.key <= "9") appendDigit(event.key);
-      if (event.key === "Backspace") backspaceAnswer();
+      if (event.key >= "1" && event.key <= "4" && !state.locked) {
+        const choice = state.current?.choices[Number(event.key) - 1];
+        if (choice !== undefined) selectChoice(choice);
+      }
+
       if (event.key === "Enter") {
         if (state.locked) nextQuestion();
-        else checkAnswer();
       }
     });
 
