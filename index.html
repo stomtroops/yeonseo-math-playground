@@ -1275,6 +1275,7 @@
       stickers: 5
     };
     const STICKER_BOARD_SIZE = 10;
+    const BLANK_SYMBOL = "□";
 
     const MODES = {
       add: { label: "덧셈", topic: "기초 연산" },
@@ -1468,7 +1469,7 @@
         answer,
         key: `add-${a}-${b}`,
         isWord: false,
-        hint: makeHint("두 수를 함께 모아 세어 봐.", [a, "+", b, "=", "?"])
+        hint: makeHint("두 수를 함께 모아 세어 봐.", [a, "+", b, "=", BLANK_SYMBOL])
       };
     }
 
@@ -1482,7 +1483,7 @@
         answer,
         key: `sub-${a}-${b}`,
         isWord: false,
-        hint: makeHint(`${a}에서 ${b}만큼 덜어내면 몇일까?`, [a, "-", b, "=", "?"])
+        hint: makeHint(`${a}에서 ${b}만큼 덜어내면 몇일까?`, [a, "-", b, "=", BLANK_SYMBOL])
       };
     }
 
@@ -1492,11 +1493,11 @@
       const answer = total - shown;
       return {
         mode: "compose",
-        text: `${total} = ${shown} + ?`,
+        text: `${total} = ${shown} + ${BLANK_SYMBOL}`,
         answer,
         key: `compose-${total}-${shown}`,
         isWord: true,
-        hint: makeHint(`${total}을 두 묶음으로 나누어 봐.`, [shown, "+", "?", "=", total])
+        hint: makeHint(`${total}을 두 묶음으로 나누어 봐.`, [shown, "+", BLANK_SYMBOL, "=", total])
       };
     }
 
@@ -1509,11 +1510,11 @@
         const total = a + answer;
         return {
           mode: "missing",
-          text: `${a} + ? = ${total}`,
+          text: `${a} + ${BLANK_SYMBOL} = ${total}`,
           answer,
           key: `missing-add-${a}-${total}`,
           isWord: false,
-          hint: makeHint(`${a}에서 ${total}이 되려면 얼마나 더할까?`, [a, "+", "?", "=", total])
+          hint: makeHint(`${a}에서 ${total}이 되려면 얼마나 더할까?`, [a, "+", BLANK_SYMBOL, "=", total])
         };
       }
 
@@ -1522,11 +1523,11 @@
       const result = total - answer;
       return {
         mode: "missing",
-        text: `${total} - ? = ${result}`,
+        text: `${total} - ${BLANK_SYMBOL} = ${result}`,
         answer,
         key: `missing-sub-${total}-${result}`,
         isWord: false,
-        hint: makeHint(`${total}에서 몇을 빼면 ${result}이 될까?`, [total, "-", "?", "=", result])
+        hint: makeHint(`${total}에서 몇을 빼면 ${result}이 될까?`, [total, "-", BLANK_SYMBOL, "=", result])
       };
     }
 
@@ -1539,11 +1540,11 @@
       const answer = start + (step * 3);
       return {
         mode: "pattern",
-        text: `${n1}, ${n2}, ${n3}, ?`,
+        text: `${n1}, ${n2}, ${n3}, ${BLANK_SYMBOL}`,
         answer,
         key: `pattern-${start}-${step}`,
         isWord: false,
-        hint: makeHint(`${step}씩 커지는 규칙이야.`, [n1, n2, n3, "?"])
+        hint: makeHint(`${step}씩 커지는 규칙이야.`, [n1, n2, n3, BLANK_SYMBOL])
       };
     }
 
@@ -1587,7 +1588,7 @@
         key: `compare-gap-${big}-${small}`,
         isWord: true,
         preferredChoices: [big, small],
-        hint: makeHint("큰 수에서 작은 수까지의 차이를 생각해 봐.", [big, "-", small, "=", "?"])
+        hint: makeHint("큰 수에서 작은 수까지의 차이를 생각해 봐.", [big, "-", small, "=", BLANK_SYMBOL])
       };
     }
 
@@ -1786,7 +1787,7 @@
 
       state.current.hint.tokens.forEach((token) => {
         const item = document.createElement("span");
-        item.className = token === "?" ? "hint-token answer" : "hint-token";
+        item.className = token === BLANK_SYMBOL || token === "?" ? "hint-token answer" : "hint-token";
         item.textContent = token;
         els.counterRow.append(item);
       });
