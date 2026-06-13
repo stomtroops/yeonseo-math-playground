@@ -262,7 +262,7 @@
     }
 
     .question.visual-question {
-      min-height: 176px;
+      min-height: 218px;
       padding: 12px;
       line-height: 1.1;
     }
@@ -301,6 +301,10 @@
       background: #fff8f1;
     }
 
+    .domino-half.is-blank {
+      background: #fff8f1;
+    }
+
     .domino-cell {
       display: grid;
       place-items: center;
@@ -322,6 +326,42 @@
       color: var(--ink);
       font-size: 1.25rem;
       font-weight: 1000;
+    }
+
+    .domino-summary {
+      width: min(300px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--line);
+      font-size: 1.05rem;
+      font-weight: 1000;
+    }
+
+    .domino-summary-head,
+    .domino-summary-value {
+      min-height: 34px;
+      display: grid;
+      place-items: center;
+      padding: 5px 8px;
+    }
+
+    .domino-summary-head {
+      background: var(--grape);
+      color: #ffffff;
+    }
+
+    .domino-summary-value {
+      background: #ffffff;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .domino-summary-value.is-target {
+      background: var(--coral-soft);
+      color: var(--coral);
     }
 
     .answer-display {
@@ -973,7 +1013,7 @@
       }
 
       .question.visual-question {
-        min-height: 146px;
+        min-height: 188px;
       }
 
       .domino-card {
@@ -1158,7 +1198,7 @@
       }
 
       .question.visual-question {
-        min-height: 156px;
+        min-height: 198px;
       }
 
       .question.word-problem {
@@ -1812,30 +1852,33 @@
     }
 
     function buildDiceQuestion() {
-      const useSum = Math.random() < 0.55;
-      const left = randInt(1, 6);
-      let right = randInt(1, 6);
-      if (!useSum) {
-        while (right === left) right = randInt(1, 6);
-      }
+      const givenKind = Math.random() < 0.5 ? "합" : "차";
+      let visible = 0;
+      let hidden = 0;
+      let sum = 0;
+      let gap = 0;
 
-      const big = Math.max(left, right);
-      const small = Math.min(left, right);
-      const answer = useSum ? left + right : big - small;
-      const operation = useSum ? "합" : "차";
-      const hintTokens = useSum
-        ? [left, "+", right, "=", BLANK_SYMBOL]
-        : [big, "-", small, "=", BLANK_SYMBOL];
+      do {
+        visible = randInt(1, 6);
+        hidden = randInt(1, 6);
+        while (hidden === visible) hidden = randInt(1, 6);
+        sum = visible + hidden;
+        gap = Math.abs(visible - hidden);
+      } while (givenKind === "차" && visible - gap >= 1 && visible + gap <= 6);
+
+      const targetKind = givenKind === "합" ? "차" : "합";
+      const givenValue = givenKind === "합" ? sum : gap;
+      const answer = targetKind === "합" ? sum : gap;
 
       return {
         mode: "dice",
-        text: `양쪽 점의 ${operation}`,
+        text: `빈칸의 ${targetKind}`,
         answer,
-        key: `dice-${operation}-${left}-${right}`,
+        key: `dice-${givenKind}-${visible}-${hidden}`,
         isWord: false,
-        visual: { type: "domino", left, right, operation },
-        preferredChoices: [left, right, big, small],
-        hint: makeHint(`도미노 양쪽 점의 ${operation}을 생각해 봐.`, hintTokens)
+        visual: { type: "domino", visible, hidden, givenKind, givenValue, targetKind },
+        preferredChoices: [visible, hidden, givenValue],
+        hint: makeHint(`보이는 점과 주어진 ${givenKind}을 보고 ${targetKind}를 찾아 봐.`, ["점", visible, givenKind, givenValue, targetKind, BLANK_SYMBOL])
       };
     }
 
@@ -2090,15 +2133,15 @@
       render();
     }
 
-    function createDominoHalf(count) {
+    function createDominoHalf(count, isBlank = false) {
       const half = document.createElement("div");
-      half.className = "domino-half";
+      half.className = isBlank ? "domino-half is-blank" : "domino-half";
       const dots = new Set(DOT_LAYOUTS[count] || []);
 
       for (let i = 0; i < 9; i += 1) {
         const cell = document.createElement("span");
         cell.className = "domino-cell";
-        if (dots.has(i)) {
+        if (!isBlank && dots.has(i)) {
           const dot = document.createElement("span");
           dot.className = "domino-dot";
           cell.append(dot);
@@ -2109,20 +2152,42 @@
       return half;
     }
 
+    function createDominoSummary(visual) {
+      const summary = document.createElement("div");
+      summary.className = "domino-summary";
+
+      ["합", "차"].forEach((label) => {
+        const head = document.createElement("span");
+        head.className = "domino-summary-head";
+        head.textContent = label;
+        summary.append(head);
+      });
+
+      ["합", "차"].forEach((label) => {
+        const value = document.createElement("span");
+        const isTarget = label === visual.targetKind;
+        value.className = isTarget ? "domino-summary-value is-target" : "domino-summary-value";
+        value.textContent = isTarget ? BLANK_SYMBOL : String(visual.givenValue);
+        summary.append(value);
+      });
+
+      return summary;
+    }
+
     function createDominoQuestion(visual) {
       const wrapper = document.createElement("div");
       wrapper.className = "domino-question";
 
       const domino = document.createElement("div");
       domino.className = "domino-card";
-      domino.setAttribute("aria-label", `왼쪽 ${visual.left}개, 오른쪽 ${visual.right}개`);
-      domino.append(createDominoHalf(visual.left), createDominoHalf(visual.right));
+      domino.setAttribute("aria-label", `보이는 점 ${visual.visible}개, 흰 빈칸`);
+      domino.append(createDominoHalf(visual.visible), createDominoHalf(0, true));
 
       const prompt = document.createElement("div");
       prompt.className = "domino-prompt";
-      prompt.textContent = `양쪽 점의 ${visual.operation}은?`;
+      prompt.textContent = `빈칸의 ${visual.targetKind}를 골라요`;
 
-      wrapper.append(domino, prompt);
+      wrapper.append(domino, createDominoSummary(visual), prompt);
       return wrapper;
     }
 
