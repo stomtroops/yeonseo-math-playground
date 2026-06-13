@@ -1278,6 +1278,7 @@
     };
     const STICKER_BOARD_SIZE = 10;
     const BLANK_SYMBOL = "□";
+    const AUTO_ADVANCE_DELAY_MS = 1100;
 
     const MODES = {
       add: { label: "덧셈", topic: "기초 연산" },
@@ -1297,6 +1298,7 @@
     };
 
     const STORY_ITEMS = ["딸기", "쿠키", "스티커", "블록", "꽃"];
+    let autoAdvanceTimer = null;
 
     const state = {
       mode: "add",
@@ -1375,6 +1377,20 @@
         level: state.level,
         daily: state.daily
       }));
+    }
+
+    function clearAutoAdvance() {
+      if (!autoAdvanceTimer) return;
+      window.clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = null;
+    }
+
+    function scheduleAutoAdvance() {
+      clearAutoAdvance();
+      autoAdvanceTimer = window.setTimeout(() => {
+        autoAdvanceTimer = null;
+        if (state.locked && !state.finished) nextQuestion();
+      }, AUTO_ADVANCE_DELAY_MS);
     }
 
     function randInt(min, max) {
@@ -1759,6 +1775,7 @@
     }
 
     function resetGame(nextMode = state.mode, nextLevel = state.level) {
+      clearAutoAdvance();
       state.mode = nextMode;
       state.level = nextLevel;
       state.questionNumber = 1;
@@ -1839,6 +1856,7 @@
         state.message = firstTry ? `잘했어! 한 번에 맞았어. ${points}점!` : `잘했어! 끝까지 생각해서 맞혔어. ${points}점!`;
         state.messageType = "good";
         playTone("good");
+        scheduleAutoAdvance();
       } else if (state.attempts < 2) {
         state.streak = 0;
         state.answerText = "";
@@ -1858,12 +1876,15 @@
     }
 
     function nextQuestion() {
+      if (state.finished) return;
       if (!state.locked) {
         state.message = "확인을 먼저 눌러줘.";
         state.messageType = "bad";
         render();
         return;
       }
+
+      clearAutoAdvance();
 
       if (state.questionNumber >= TOTAL_QUESTIONS) {
         finishGame();
