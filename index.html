@@ -382,6 +382,58 @@
       background: #ffffff;
     }
 
+    .draw-wrap {
+      width: min(330px, 100%);
+      display: grid;
+      gap: 6px;
+      justify-items: end;
+    }
+
+    .draw-area {
+      position: relative;
+      width: 100%;
+      touch-action: none;
+    }
+
+    .draw-area .count-board {
+      width: 100%;
+    }
+
+    .draw-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      pointer-events: auto;
+    }
+
+    .draw-path {
+      fill: none;
+      stroke: rgba(255, 93, 153, 0.82);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .draw-clear {
+      min-height: 30px;
+      padding: 0 12px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--coral);
+      font: inherit;
+      font-size: 0.86rem;
+      font-weight: 1000;
+      box-shadow: 0 3px 0 rgba(255, 107, 107, 0.16);
+    }
+
+    .draw-clear:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 rgba(255, 107, 107, 0.16);
+    }
+
     .count-dot {
       width: 17px;
       height: 17px;
@@ -1112,6 +1164,14 @@
         padding: 8px;
       }
 
+      .draw-wrap {
+        width: min(286px, 100%);
+      }
+
+      .draw-path {
+        stroke-width: 6;
+      }
+
       .count-dot {
         width: 13px;
         height: 13px;
@@ -1303,6 +1363,14 @@
         width: min(282px, 100%);
         gap: 4px;
         padding: 8px;
+      }
+
+      .draw-wrap {
+        width: min(282px, 100%);
+      }
+
+      .draw-path {
+        stroke-width: 6;
       }
 
       .count-dot {
@@ -2394,7 +2462,7 @@
       return wrapper;
     }
 
-    function createCountBoard(total) {
+    function createCountBoard(total, allowDrawing = false) {
       const board = document.createElement("div");
       board.className = "count-board";
       board.setAttribute("aria-label", `${total}개 점`);
@@ -2405,7 +2473,86 @@
         board.append(dot);
       }
 
+      if (allowDrawing) return createDrawableCountBoard(board);
       return board;
+    }
+
+    function createDrawableCountBoard(board) {
+      const svgNamespace = "http://www.w3.org/2000/svg";
+      const wrapper = document.createElement("div");
+      const area = document.createElement("div");
+      const layer = document.createElementNS(svgNamespace, "svg");
+      const clearButton = document.createElement("button");
+      let activePath = null;
+      let activePoints = [];
+
+      wrapper.className = "draw-wrap";
+      area.className = "draw-area";
+      layer.classList.add("draw-layer");
+      layer.setAttribute("aria-hidden", "true");
+      clearButton.type = "button";
+      clearButton.className = "draw-clear";
+      clearButton.textContent = "지우기";
+      clearButton.setAttribute("aria-label", "그린 묶음 지우기");
+
+      function getPoint(event) {
+        const rect = layer.getBoundingClientRect();
+        const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+        const y = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
+        return { x, y };
+      }
+
+      function updatePath() {
+        const pathText = activePoints
+          .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
+          .join(" ");
+        activePath.setAttribute("d", pathText);
+      }
+
+      layer.addEventListener("pointerdown", (event) => {
+        if (event.button !== undefined && event.button !== 0) return;
+        event.preventDefault();
+        activePath = document.createElementNS(svgNamespace, "path");
+        activePath.classList.add("draw-path");
+        activePoints = [getPoint(event)];
+        updatePath();
+        layer.append(activePath);
+        layer.setPointerCapture?.(event.pointerId);
+      });
+
+      layer.addEventListener("pointermove", (event) => {
+        if (!activePath) return;
+        event.preventDefault();
+        activePoints.push(getPoint(event));
+        updatePath();
+      });
+
+      function finishDrawing(event) {
+        if (!activePath) return;
+        event.preventDefault();
+        if (activePoints.length === 1) {
+          activePoints.push({ x: activePoints[0].x + 0.1, y: activePoints[0].y + 0.1 });
+          updatePath();
+        }
+        layer.releasePointerCapture?.(event.pointerId);
+        activePath = null;
+        activePoints = [];
+      }
+
+      layer.addEventListener("pointerup", finishDrawing);
+      layer.addEventListener("pointercancel", finishDrawing);
+      layer.addEventListener("lostpointercapture", () => {
+        activePath = null;
+        activePoints = [];
+      });
+
+      clearButton.addEventListener("click", () => {
+        layer.replaceChildren();
+      });
+
+      area.append(board, layer);
+      wrapper.append(area, clearButton);
+      return wrapper;
     }
 
     function createCountExpression(text) {
@@ -2448,7 +2595,7 @@
       wrapper.className = "count-question";
 
       if (visual.target === "expression") {
-        wrapper.append(createCountBoard(visual.total));
+        wrapper.append(createCountBoard(visual.total, true));
       } else {
         wrapper.append(createCountExpression(visual.expression));
       }
@@ -2463,7 +2610,7 @@
     function createBundleQuestion(visual) {
       const wrapper = document.createElement("div");
       wrapper.className = "count-question";
-      wrapper.append(createCountBoard(visual.total), createBundleSummary(visual));
+      wrapper.append(createCountBoard(visual.total, true), createBundleSummary(visual));
 
       const prompt = document.createElement("div");
       prompt.className = "domino-prompt";
