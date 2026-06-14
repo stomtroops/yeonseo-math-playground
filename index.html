@@ -364,6 +364,80 @@
       color: var(--coral);
     }
 
+    .count-question {
+      width: min(390px, 100%);
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .count-board {
+      width: min(330px, 100%);
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      padding: 10px;
+      border: 2px solid #9eb3c8;
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .count-dot {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #4f79a8;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16);
+    }
+
+    .count-expression {
+      min-width: 132px;
+      padding: 9px 14px;
+      border: 2px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--ink);
+      font-size: 1.65rem;
+      font-weight: 1000;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bundle-summary {
+      width: min(330px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--line);
+      font-size: 1rem;
+      font-weight: 1000;
+    }
+
+    .bundle-summary-head,
+    .bundle-summary-value {
+      min-height: 34px;
+      display: grid;
+      place-items: center;
+      padding: 5px 8px;
+    }
+
+    .bundle-summary-head {
+      background: #f1d6de;
+      color: var(--ink);
+    }
+
+    .bundle-summary-value {
+      background: #ffffff;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bundle-summary-value.is-target {
+      background: var(--coral-soft);
+      color: var(--coral);
+    }
+
     .answer-display {
       min-height: 290px;
       display: grid;
@@ -823,6 +897,11 @@
       box-shadow: 0 6px 0 rgba(226, 61, 109, 0.18);
     }
 
+    .choice-button.text-choice {
+      font-size: 2.15rem;
+      line-height: 1.05;
+    }
+
     .submit-button {
       min-height: 100%;
       padding: 0 10px;
@@ -1027,6 +1106,21 @@
         height: 11px;
       }
 
+      .count-board {
+        width: min(286px, 100%);
+        gap: 4px;
+        padding: 8px;
+      }
+
+      .count-dot {
+        width: 13px;
+        height: 13px;
+      }
+
+      .count-expression {
+        font-size: 1.25rem;
+      }
+
       .question.word-problem {
         font-size: 2.35rem;
       }
@@ -1107,6 +1201,10 @@
       .choice-button {
         min-height: 88px;
         font-size: 3.4rem;
+      }
+
+      .choice-button.text-choice {
+        font-size: 1.65rem;
       }
 
       .submit-button {
@@ -1201,6 +1299,21 @@
         min-height: 198px;
       }
 
+      .count-board {
+        width: min(282px, 100%);
+        gap: 4px;
+        padding: 8px;
+      }
+
+      .count-dot {
+        width: 13px;
+        height: 13px;
+      }
+
+      .count-expression {
+        font-size: 1.22rem;
+      }
+
       .question.word-problem {
         font-size: 2.05rem;
       }
@@ -1244,6 +1357,10 @@
         font-size: 3rem;
       }
 
+      .choice-button.text-choice {
+        font-size: 1.55rem;
+      }
+
       .submit-button {
         min-height: 56px;
       }
@@ -1285,6 +1402,8 @@
         <button class="segment-button" type="button" data-mode="makeTen" aria-pressed="false">10만들기</button>
         <button class="segment-button" type="button" data-mode="bridge" aria-pressed="false">20·30</button>
         <button class="segment-button" type="button" data-mode="dice" aria-pressed="false">주사위</button>
+        <button class="segment-button" type="button" data-mode="matchCount" aria-pressed="false">연결</button>
+        <button class="segment-button" type="button" data-mode="bundle" aria-pressed="false">묶음</button>
         <button class="segment-button" type="button" data-mode="pattern" aria-pressed="false">규칙</button>
         <button class="segment-button" type="button" data-mode="compare" aria-pressed="false">비교</button>
       </div>
@@ -1453,6 +1572,8 @@
       makeTen: { label: "10만들기", topic: "10의 보수" },
       bridge: { label: "20·30", topic: "확장 연산" },
       dice: { label: "주사위", topic: "점 합·차" },
+      matchCount: { label: "연결", topic: "그림-식-수" },
+      bundle: { label: "묶음", topic: "10개씩 묶음" },
       pattern: { label: "규칙", topic: "다음 수" },
       compare: { label: "비교", topic: "크기 비교" }
     };
@@ -1658,6 +1779,41 @@
 
     function makeHint(title, tokens) {
       return { title, tokens };
+    }
+
+    function getCountingMax(level) {
+      if (level.max <= 10) return 19;
+      if (level.max <= 20) return 29;
+      return 49;
+    }
+
+    function makeCountTotal(level) {
+      const max = getCountingMax(level);
+      let total = 0;
+      do {
+        total = randInt(11, max);
+      } while (total % 10 === 0);
+      return total;
+    }
+
+    function makeTensExpression(total) {
+      const base = Math.floor(total / 10) * 10;
+      return `${base} + ${total - base}`;
+    }
+
+    function makeExpressionChoices(answerTotal, level) {
+      const max = getCountingMax(level);
+      const totals = new Set([answerTotal]);
+
+      while (totals.size < 4) {
+        let candidate = 0;
+        do {
+          candidate = randInt(11, max);
+        } while (candidate % 10 === 0);
+        totals.add(candidate);
+      }
+
+      return shuffle([...totals].map(makeTensExpression));
     }
 
     function buildAddQuestion(level) {
@@ -1882,6 +2038,43 @@
       };
     }
 
+    function buildMatchCountQuestion(level) {
+      const total = makeCountTotal(level);
+      const expression = makeTensExpression(total);
+      const asksExpression = Math.random() < 0.55;
+
+      return {
+        mode: "matchCount",
+        text: asksExpression ? "그림과 식 연결" : "식과 수 연결",
+        answer: asksExpression ? expression : total,
+        key: `match-count-${asksExpression ? "expr" : "total"}-${total}`,
+        isWord: false,
+        visual: { type: "countMatch", total, expression, target: asksExpression ? "expression" : "total" },
+        choices: asksExpression ? makeExpressionChoices(total, level) : undefined,
+        preferredChoices: asksExpression ? [] : [Math.floor(total / 10) * 10, total % 10],
+        hint: makeHint("10개씩 묶어 식과 수를 연결해 봐.", [expression, "=", total])
+      };
+    }
+
+    function buildBundleQuestion(level) {
+      const total = makeCountTotal(level);
+      const tens = Math.floor(total / 10);
+      const ones = total % 10;
+      const target = Math.random() < 0.5 ? "tens" : "ones";
+      const targetLabel = target === "tens" ? "10개씩 묶음" : "낱개";
+
+      return {
+        mode: "bundle",
+        text: targetLabel,
+        answer: target === "tens" ? tens : ones,
+        key: `bundle-${target}-${total}`,
+        isWord: false,
+        visual: { type: "bundle", total, tens, ones, target },
+        preferredChoices: [tens, ones, total],
+        hint: makeHint("10개씩 묶고 남은 낱개를 세어 봐.", [tens, "묶음", ones, "낱개"])
+      };
+    }
+
     function buildPatternQuestion(level) {
       const step = randInt(1, level.stepMax);
       const start = randInt(0, Math.max(0, level.max - (step * 4)));
@@ -1952,6 +2145,8 @@
         makeTen: buildMakeTenQuestion,
         bridge: buildBridgeQuestion,
         dice: buildDiceQuestion,
+        matchCount: buildMatchCountQuestion,
+        bundle: buildBundleQuestion,
         pattern: buildPatternQuestion,
         compare: buildCompareQuestion
       };
@@ -1969,7 +2164,9 @@
       }
 
       state.current = nextQuestion;
-      state.current.choices = makeAnswerChoices(nextQuestion.answer, level, nextQuestion.preferredChoices);
+      state.current.choices = nextQuestion.choices
+        ? shuffle(nextQuestion.choices)
+        : makeAnswerChoices(nextQuestion.answer, level, nextQuestion.preferredChoices);
       state.lastQuestionKey = nextQuestion.key;
       state.answerText = "";
       state.attempts = 0;
@@ -2045,10 +2242,11 @@
         return;
       }
 
-      const guess = Number(state.answerText);
+      const guess = state.answerText;
+      const answer = String(state.current.answer);
       state.attempts += 1;
 
-      if (guess === state.current.answer) {
+      if (guess === answer) {
         const firstTry = state.attempts === 1;
         const hintCost = state.hintOpen ? 2 : 0;
         const basePoints = firstTry ? 10 + Math.min(state.streak, 5) : 6;
@@ -2065,9 +2263,14 @@
         playTone("good");
         scheduleAutoAdvance();
       } else if (state.attempts < 2) {
+        const numericGuess = Number(guess);
+        const numericAnswer = Number(answer);
+        const canCompare = Number.isFinite(numericGuess) && Number.isFinite(numericAnswer);
         state.streak = 0;
         state.answerText = "";
-        state.message = guess < state.current.answer ? "조금 더 큰 수야. 한 번 더!" : "조금 더 작은 수야. 한 번 더!";
+        state.message = canCompare
+          ? numericGuess < numericAnswer ? "조금 더 큰 수야. 한 번 더!" : "조금 더 작은 수야. 한 번 더!"
+          : "다른 보기를 골라봐. 한 번 더!";
         state.messageType = "bad";
         playTone("bad");
       } else {
@@ -2191,6 +2394,84 @@
       return wrapper;
     }
 
+    function createCountBoard(total) {
+      const board = document.createElement("div");
+      board.className = "count-board";
+      board.setAttribute("aria-label", `${total}개 점`);
+
+      for (let i = 0; i < total; i += 1) {
+        const dot = document.createElement("span");
+        dot.className = "count-dot";
+        board.append(dot);
+      }
+
+      return board;
+    }
+
+    function createCountExpression(text) {
+      const expression = document.createElement("div");
+      expression.className = "count-expression";
+      expression.textContent = text;
+      return expression;
+    }
+
+    function createBundleSummary(visual) {
+      const summary = document.createElement("div");
+      summary.className = "bundle-summary";
+
+      [
+        { key: "tens", label: "10개씩 묶음", value: visual.tens },
+        { key: "ones", label: "낱개", value: visual.ones }
+      ].forEach((item) => {
+        const head = document.createElement("span");
+        head.className = "bundle-summary-head";
+        head.textContent = item.label;
+        summary.append(head);
+      });
+
+      [
+        { key: "tens", value: visual.tens },
+        { key: "ones", value: visual.ones }
+      ].forEach((item) => {
+        const value = document.createElement("span");
+        const isTarget = item.key === visual.target;
+        value.className = isTarget ? "bundle-summary-value is-target" : "bundle-summary-value";
+        value.textContent = isTarget ? BLANK_SYMBOL : String(item.value);
+        summary.append(value);
+      });
+
+      return summary;
+    }
+
+    function createCountMatchQuestion(visual) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "count-question";
+
+      if (visual.target === "expression") {
+        wrapper.append(createCountBoard(visual.total));
+      } else {
+        wrapper.append(createCountExpression(visual.expression));
+      }
+
+      const prompt = document.createElement("div");
+      prompt.className = "domino-prompt";
+      prompt.textContent = visual.target === "expression" ? "그림과 이어질 식을 골라요" : "식과 이어질 수를 골라요";
+      wrapper.append(prompt);
+      return wrapper;
+    }
+
+    function createBundleQuestion(visual) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "count-question";
+      wrapper.append(createCountBoard(visual.total), createBundleSummary(visual));
+
+      const prompt = document.createElement("div");
+      prompt.className = "domino-prompt";
+      prompt.textContent = visual.target === "tens" ? "10개씩 묶음은?" : "낱개는?";
+      wrapper.append(prompt);
+      return wrapper;
+    }
+
     function renderQuestion() {
       els.questionText.replaceChildren();
       els.questionText.className = "question";
@@ -2199,6 +2480,18 @@
       if (state.current.visual?.type === "domino") {
         els.questionText.classList.add("visual-question");
         els.questionText.append(createDominoQuestion(state.current.visual));
+        return;
+      }
+
+      if (state.current.visual?.type === "countMatch") {
+        els.questionText.classList.add("visual-question");
+        els.questionText.append(createCountMatchQuestion(state.current.visual));
+        return;
+      }
+
+      if (state.current.visual?.type === "bundle") {
+        els.questionText.classList.add("visual-question");
+        els.questionText.append(createBundleQuestion(state.current.visual));
         return;
       }
 
@@ -2233,6 +2526,7 @@
         const selected = String(choice) === state.answerText;
         button.type = "button";
         button.className = "choice-button";
+        if (String(choice).length > 2) button.classList.add("text-choice");
         button.dataset.choice = String(choice);
         button.textContent = choice;
         button.setAttribute("aria-label", `${index + 1}번 보기 ${choice}`);
