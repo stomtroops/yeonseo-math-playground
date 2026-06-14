@@ -1,4 +1,4 @@
-const CACHE_NAME = "yeonseo-math-v19";
+const CACHE_NAME = "yeonseo-math-v20";
 const APP_SHELL = [
   new URL("./", self.location).toString(),
   new URL("./index.html", self.location).toString(),

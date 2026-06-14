@@ -192,10 +192,7 @@
     }
 
     .workspace {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-      gap: 12px;
-      align-items: stretch;
+      display: block;
     }
 
     .practice-panel {
@@ -760,10 +757,54 @@
     }
 
     .control-panel {
+      position: fixed;
+      top: 50%;
+      right: max(14px, env(safe-area-inset-right));
+      z-index: 30;
+      width: min(360px, calc(100vw - 28px));
+      max-height: calc(100dvh - 28px);
+      overflow: auto;
       padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      transform: translateY(-50%);
+    }
+
+    .control-panel[hidden],
+    .settings-backdrop[hidden] {
+      display: none;
+    }
+
+    .settings-tab {
+      position: fixed;
+      top: 50%;
+      right: max(0px, env(safe-area-inset-right));
+      z-index: 32;
+      min-width: 58px;
+      min-height: 58px;
+      padding: 8px 10px;
+      border: 2px solid var(--line);
+      border-right: 0;
+      border-radius: 999px 0 0 999px;
+      background: #ffffff;
+      color: var(--coral);
+      font-weight: 1000;
+      box-shadow: 0 10px 24px rgba(224, 69, 126, 0.2);
+      transform: translateY(-50%);
+    }
+
+    .settings-tab[aria-expanded="true"] {
+      background: var(--coral-soft);
+      color: var(--teal-dark);
+    }
+
+    .settings-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 28;
+      background: rgba(91, 51, 73, 0.18);
+      backdrop-filter: blur(2px);
     }
 
     .control-title {
@@ -992,6 +1033,10 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 7px;
+    }
+
+    .practice-actions {
+      margin-top: 8px;
     }
 
     .action-button {
@@ -1535,6 +1580,9 @@
       </div>
     </section>
 
+    <button class="settings-tab" type="button" id="settingsToggle" aria-expanded="false" aria-controls="settingsPanel">난이도</button>
+    <button class="settings-backdrop" type="button" id="settingsBackdrop" aria-label="난이도 패널 닫기" hidden></button>
+
     <div class="workspace">
       <section class="practice-panel" aria-labelledby="questionHeading">
         <div class="status-row">
@@ -1551,6 +1599,11 @@
               <div class="choice-panel" id="choicePanel" aria-label="정답 보기"></div>
               <button class="submit-button" type="button" id="submitButton" disabled>입력</button>
             </div>
+          </div>
+
+          <div class="actions practice-actions">
+            <button class="action-button hint" type="button" id="hintButton">힌트</button>
+            <button class="action-button next" type="button" id="nextButton" disabled>다음</button>
           </div>
 
           <div class="mascot-stage is-ready" id="mascotStage" aria-live="polite">
@@ -1601,7 +1654,7 @@
         </div>
       </section>
 
-      <aside class="control-panel" aria-label="난이도와 미션">
+      <aside class="control-panel" id="settingsPanel" aria-label="난이도와 미션" hidden>
         <div>
           <p class="control-title">난이도</p>
           <div class="segmented" id="levelButtons">
@@ -1649,11 +1702,6 @@
             </div>
           </div>
           <div class="sticker-board" id="stickerBoard" aria-label="오늘 모은 별스티커"></div>
-        </div>
-
-        <div class="actions">
-          <button class="action-button hint" type="button" id="hintButton">힌트</button>
-          <button class="action-button next" type="button" id="nextButton" disabled>다음</button>
         </div>
       </aside>
     </div>
@@ -1725,6 +1773,7 @@
       finished: false,
       hintOpen: false,
       mascotCheering: false,
+      settingsOpen: false,
       message: "연서야, 같이 풀자!",
       messageType: "",
       best: 0,
@@ -1761,6 +1810,9 @@
       stickerMissionInfo: document.getElementById("stickerMissionInfo"),
       stickerMissionFill: document.getElementById("stickerMissionFill"),
       stickerBoard: document.getElementById("stickerBoard"),
+      settingsToggle: document.getElementById("settingsToggle"),
+      settingsBackdrop: document.getElementById("settingsBackdrop"),
+      settingsPanel: document.getElementById("settingsPanel"),
       choicePanel: document.getElementById("choicePanel"),
       submitButton: document.getElementById("submitButton"),
       modeButtons: [...document.querySelectorAll("[data-mode]")],
@@ -2786,6 +2838,9 @@
       els.submitButton.disabled = !state.answerText || state.locked || state.finished;
       els.nextButton.disabled = !state.locked || state.finished;
       els.hintButton.disabled = state.finished;
+      els.settingsToggle.setAttribute("aria-expanded", String(state.settingsOpen));
+      els.settingsPanel.hidden = !state.settingsOpen;
+      els.settingsBackdrop.hidden = !state.settingsOpen;
 
       els.modeButtons.forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode));
@@ -2796,6 +2851,11 @@
       renderChoices();
       renderHint();
       renderDailyMission();
+    }
+
+    function setSettingsOpen(open) {
+      state.settingsOpen = open;
+      render();
     }
 
     function setMissionProgress(infoEl, fillEl, value, target) {
@@ -2825,9 +2885,14 @@
     });
 
     els.levelButtons.forEach((button) => {
-      button.addEventListener("click", () => resetGame(state.mode, button.dataset.level));
+      button.addEventListener("click", () => {
+        resetGame(state.mode, button.dataset.level);
+        setSettingsOpen(false);
+      });
     });
 
+    els.settingsToggle.addEventListener("click", () => setSettingsOpen(!state.settingsOpen));
+    els.settingsBackdrop.addEventListener("click", () => setSettingsOpen(false));
     els.hintButton.addEventListener("click", openHint);
     els.submitButton.addEventListener("click", checkAnswer);
     els.nextButton.addEventListener("click", nextQuestion);
@@ -2845,6 +2910,10 @@
         } else {
           checkAnswer();
         }
+      }
+
+      if (event.key === "Escape" && state.settingsOpen) {
+        setSettingsOpen(false);
       }
     });
 
