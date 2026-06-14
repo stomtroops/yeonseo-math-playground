@@ -229,14 +229,22 @@
 
     .question-zone {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(210px, 1fr);
+      grid-template-areas:
+        "question answer"
+        "actions answer"
+        "mascot answer"
+        "hint answer"
+        "message answer";
+      align-content: center;
+      align-items: stretch;
       gap: 14px;
       text-align: center;
     }
 
     .question {
+      grid-area: question;
       min-height: 112px;
       display: flex;
       align-items: center;
@@ -511,7 +519,8 @@
     }
 
     .answer-display {
-      min-height: 290px;
+      grid-area: answer;
+      min-height: 0;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
       gap: 10px;
@@ -542,11 +551,12 @@
     .answer-body {
       min-height: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(92px, 0.28fr);
+      grid-template-rows: minmax(0, 1fr) minmax(64px, auto);
       gap: 10px;
     }
 
     .mascot-stage {
+      grid-area: mascot;
       min-height: 116px;
       display: flex;
       align-items: center;
@@ -616,6 +626,7 @@
     }
 
     .hint-area {
+      grid-area: hint;
       min-height: 118px;
       padding: 12px;
       border-radius: var(--radius);
@@ -693,6 +704,7 @@
     }
 
     .message {
+      grid-area: message;
       min-height: 42px;
       margin: 0;
       display: flex;
@@ -976,17 +988,18 @@
 
     .choice-panel {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
+      grid-auto-rows: minmax(64px, 1fr);
       gap: 10px;
       min-height: 0;
     }
 
     .choice-button {
-      min-height: 112px;
+      min-height: 64px;
       background: #ffffff;
       border: 2px solid #ffcfe3;
       color: #5b3349;
-      font-size: 4.4rem;
+      font-size: 3.2rem;
       line-height: 1;
       box-shadow: 0 6px 0 #ffcfe3;
       font-variant-numeric: tabular-nums;
@@ -1014,12 +1027,12 @@
     }
 
     .choice-button.text-choice {
-      font-size: 2.15rem;
+      font-size: 1.45rem;
       line-height: 1.05;
     }
 
     .submit-button {
-      min-height: 100%;
+      min-height: 64px;
       padding: 0 10px;
       background: var(--teal);
       border: 2px solid var(--teal-dark);
@@ -1036,6 +1049,7 @@
     }
 
     .practice-actions {
+      grid-area: actions;
       margin-top: 8px;
     }
 
@@ -1204,6 +1218,7 @@
 
       .question-zone {
         gap: 8px;
+        grid-template-columns: minmax(0, 3fr) minmax(190px, 1fr);
       }
 
       .question {
@@ -1259,13 +1274,13 @@
       }
 
       .answer-display {
-        min-height: 236px;
+        min-height: 0;
         padding: 9px;
         gap: 7px;
       }
 
       .answer-body {
-        grid-template-columns: minmax(0, 1fr) 84px;
+        grid-template-rows: minmax(0, 1fr) minmax(54px, auto);
         gap: 7px;
       }
 
@@ -1332,15 +1347,16 @@
       }
 
       .choice-button {
-        min-height: 88px;
-        font-size: 3.4rem;
+        min-height: 54px;
+        font-size: 2.45rem;
       }
 
       .choice-button.text-choice {
-        font-size: 1.65rem;
+        font-size: 1.12rem;
       }
 
       .submit-button {
+        min-height: 54px;
         font-size: 1.05rem;
       }
 
@@ -1428,6 +1444,21 @@
         font-size: 3.35rem;
       }
 
+      .question-zone {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .question,
+      .answer-display,
+      .practice-actions,
+      .mascot-stage,
+      .hint-area,
+      .message {
+        grid-area: auto;
+      }
+
       .question.visual-question {
         min-height: 198px;
       }
@@ -1470,6 +1501,12 @@
 
       .answer-body {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+
+      .choice-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: auto;
       }
 
       .mascot-stage {
