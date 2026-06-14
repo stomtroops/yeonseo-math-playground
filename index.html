@@ -365,25 +365,27 @@
     }
 
     .count-question {
-      width: min(390px, 100%);
+      width: min(560px, 100%);
       display: grid;
       gap: 10px;
       justify-items: center;
     }
 
     .count-board {
-      width: min(330px, 100%);
+      --count-dot-size: 32px;
+      --count-dot-gap: 8px;
+      width: min(520px, 100%);
       display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 5px;
-      padding: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 12px;
       border: 2px solid #9eb3c8;
       border-radius: 10px;
-      background: #ffffff;
+      background: #f7fbff;
     }
 
     .draw-wrap {
-      width: min(330px, 100%);
+      width: min(520px, 100%);
       display: grid;
       gap: 6px;
       justify-items: end;
@@ -434,9 +436,30 @@
       box-shadow: 0 2px 0 rgba(255, 107, 107, 0.16);
     }
 
+    .count-frame {
+      display: grid;
+      grid-template-columns: repeat(5, var(--count-dot-size));
+      gap: var(--count-dot-gap);
+      justify-content: center;
+      padding: 8px;
+      border: 2px solid rgba(158, 179, 200, 0.75);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .count-slot {
+      width: var(--count-dot-size);
+      height: var(--count-dot-size);
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(79, 121, 168, 0.22);
+      border-radius: 50%;
+      background: rgba(79, 121, 168, 0.06);
+    }
+
     .count-dot {
-      width: 17px;
-      height: 17px;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       background: #4f79a8;
       box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16);
@@ -455,7 +478,7 @@
     }
 
     .bundle-summary {
-      width: min(330px, 100%);
+      width: min(520px, 100%);
       display: grid;
       grid-template-columns: 1fr 1fr;
       overflow: hidden;
@@ -1159,22 +1182,27 @@
       }
 
       .count-board {
-        width: min(286px, 100%);
-        gap: 4px;
+        --count-dot-size: 24px;
+        --count-dot-gap: 6px;
+        width: min(420px, 100%);
+        gap: 8px;
         padding: 8px;
       }
 
       .draw-wrap {
-        width: min(286px, 100%);
+        width: min(420px, 100%);
+      }
+
+      .bundle-summary {
+        width: min(420px, 100%);
       }
 
       .draw-path {
         stroke-width: 6;
       }
 
-      .count-dot {
-        width: 13px;
-        height: 13px;
+      .count-frame {
+        padding: 6px;
       }
 
       .count-expression {
@@ -1360,22 +1388,27 @@
       }
 
       .count-board {
-        width: min(282px, 100%);
-        gap: 4px;
+        --count-dot-size: 22px;
+        --count-dot-gap: 5px;
+        width: min(360px, 100%);
+        gap: 8px;
         padding: 8px;
       }
 
       .draw-wrap {
-        width: min(282px, 100%);
+        width: min(360px, 100%);
+      }
+
+      .bundle-summary {
+        width: min(360px, 100%);
       }
 
       .draw-path {
         stroke-width: 6;
       }
 
-      .count-dot {
-        width: 13px;
-        height: 13px;
+      .count-frame {
+        padding: 6px;
       }
 
       .count-expression {
@@ -1443,6 +1476,21 @@
 
       .restart-button {
         width: 100%;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .count-board {
+        --count-dot-size: 20px;
+        --count-dot-gap: 4px;
+        width: min(320px, 100%);
+        gap: 6px;
+        padding: 6px;
+      }
+
+      .draw-wrap,
+      .bundle-summary {
+        width: min(320px, 100%);
       }
     }
   </style>
@@ -2465,12 +2513,29 @@
     function createCountBoard(total, allowDrawing = false) {
       const board = document.createElement("div");
       board.className = "count-board";
-      board.setAttribute("aria-label", `${total}개 점`);
+      board.setAttribute("aria-label", `${total}개 점, 10개씩 묶음 점판`);
 
-      for (let i = 0; i < total; i += 1) {
-        const dot = document.createElement("span");
-        dot.className = "count-dot";
-        board.append(dot);
+      const frameCount = Math.ceil(total / 10);
+      for (let frameIndex = 0; frameIndex < frameCount; frameIndex += 1) {
+        const dotsInFrame = Math.min(10, total - frameIndex * 10);
+        const frame = document.createElement("div");
+        frame.className = "count-frame";
+        frame.setAttribute("aria-label", `${frameIndex + 1}번째 묶음, 점 ${dotsInFrame}개`);
+
+        for (let slotIndex = 0; slotIndex < 10; slotIndex += 1) {
+          const slot = document.createElement("span");
+          slot.className = "count-slot";
+
+          if (slotIndex < dotsInFrame) {
+            const dot = document.createElement("span");
+            dot.className = "count-dot";
+            slot.append(dot);
+          }
+
+          frame.append(slot);
+        }
+
+        board.append(frame);
       }
 
       if (allowDrawing) return createDrawableCountBoard(board);
