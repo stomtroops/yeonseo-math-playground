@@ -104,15 +104,24 @@
     }
 
     .mode-strip {
+      position: fixed;
+      top: 50%;
+      left: max(14px, env(safe-area-inset-left));
+      z-index: 30;
+      width: min(520px, calc(100vw - 28px));
+      max-height: calc(100dvh - 28px);
+      overflow: auto;
       padding: 10px 12px;
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: center;
+      grid-template-columns: 1fr;
+      align-items: stretch;
       gap: 10px;
+      transform: translateY(-50%);
     }
 
     .mode-strip .control-title {
       margin: 0;
+      text-align: center;
       white-space: nowrap;
     }
 
@@ -766,21 +775,21 @@
     }
 
     .control-panel[hidden],
-    .settings-backdrop[hidden] {
+    .mode-strip[hidden],
+    .settings-backdrop[hidden],
+    .area-backdrop[hidden] {
       display: none;
     }
 
-    .settings-tab {
+    .settings-tab,
+    .area-tab {
       position: fixed;
       top: 50%;
-      right: max(0px, env(safe-area-inset-right));
       z-index: 32;
       min-width: 58px;
       min-height: 58px;
       padding: 8px 10px;
       border: 2px solid var(--line);
-      border-right: 0;
-      border-radius: 999px 0 0 999px;
       background: #ffffff;
       color: var(--coral);
       font-weight: 1000;
@@ -788,12 +797,26 @@
       transform: translateY(-50%);
     }
 
-    .settings-tab[aria-expanded="true"] {
+    .settings-tab {
+      right: max(0px, env(safe-area-inset-right));
+      border-right: 0;
+      border-radius: 999px 0 0 999px;
+    }
+
+    .area-tab {
+      left: max(0px, env(safe-area-inset-left));
+      border-left: 0;
+      border-radius: 0 999px 999px 0;
+    }
+
+    .settings-tab[aria-expanded="true"],
+    .area-tab[aria-expanded="true"] {
       background: var(--coral-soft);
       color: var(--teal-dark);
     }
 
-    .settings-backdrop {
+    .settings-backdrop,
+    .area-backdrop {
       position: fixed;
       inset: 0;
       z-index: 28;
@@ -894,6 +917,13 @@
       background: linear-gradient(180deg, #ffffff 0%, #fff6fb 100%);
     }
 
+    .month-card {
+      padding: 10px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #ffffff 0%, #f7eeff 100%);
+    }
+
     .mission-head {
       display: flex;
       align-items: center;
@@ -966,6 +996,90 @@
       border-color: #f3c85d;
       color: #f2a900;
       box-shadow: inset 0 -3px 0 rgba(242, 169, 0, 0.14);
+    }
+
+    .month-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .month-item {
+      min-height: 44px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #ffffff;
+      text-align: center;
+    }
+
+    .month-item span {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .month-item strong {
+      color: var(--ink);
+      font-size: 0.95rem;
+      font-weight: 1000;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .month-board {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .month-day {
+      min-height: 43px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 1px;
+      padding: 3px;
+      border: 1px solid #efd4e3;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #d2a8bd;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .month-day.has-record {
+      border-color: #f3c85d;
+      background: var(--sun-soft);
+      color: #705200;
+    }
+
+    .month-day.is-today {
+      border-color: var(--coral);
+      box-shadow: inset 0 0 0 2px rgba(255, 93, 153, 0.2);
+    }
+
+    .month-day-number {
+      font-size: 0.72rem;
+      font-weight: 1000;
+    }
+
+    .month-day-stars {
+      min-height: 12px;
+      color: #f2a900;
+      font-size: 0.68rem;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .month-day-count {
+      color: var(--muted);
+      font-size: 0.58rem;
+      font-weight: 900;
+      line-height: 1;
     }
 
     .choice-panel {
@@ -1137,8 +1251,28 @@
       .control-panel {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+          "level score"
+          "mission mission"
+          "month month";
         align-items: start;
         align-content: start;
+      }
+
+      .control-panel > div:nth-child(1) {
+        grid-area: level;
+      }
+
+      .score-grid {
+        grid-area: score;
+      }
+
+      .mission-card {
+        grid-area: mission;
+      }
+
+      .month-card {
+        grid-area: month;
       }
     }
 
@@ -1292,7 +1426,8 @@
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-areas:
           "level score"
-          "mission actions";
+          "mission mission"
+          "month month";
         align-items: start;
         align-content: start;
         gap: 7px;
@@ -1309,6 +1444,25 @@
       .mission-card {
         grid-area: mission;
         padding: 8px;
+      }
+
+      .month-card {
+        grid-area: month;
+        padding: 8px;
+      }
+
+      .month-summary {
+        gap: 4px;
+        margin-bottom: 6px;
+      }
+
+      .month-item {
+        min-height: 38px;
+        padding: 4px;
+      }
+
+      .month-day {
+        min-height: 36px;
       }
 
       .actions {
@@ -1564,7 +1718,7 @@
       <div class="best-pill" id="bestPill">최고 0점</div>
     </header>
 
-    <section class="mode-strip" aria-label="오늘의 영역 선택">
+    <section class="mode-strip" id="areaPanel" aria-label="오늘의 영역 선택" hidden>
       <p class="control-title">오늘의 영역</p>
       <div class="segmented mode-grid" id="modeButtons">
         <button class="segment-button" type="button" data-mode="add" aria-pressed="true">덧셈</button>
@@ -1591,6 +1745,8 @@
       </div>
     </section>
 
+    <button class="area-tab" type="button" id="areaToggle" aria-expanded="false" aria-controls="areaPanel">영역</button>
+    <button class="area-backdrop" type="button" id="areaBackdrop" aria-label="오늘의 영역 닫기" hidden></button>
     <button class="settings-tab" type="button" id="settingsToggle" aria-expanded="false" aria-controls="settingsPanel">난이도</button>
     <button class="settings-backdrop" type="button" id="settingsBackdrop" aria-label="난이도 패널 닫기" hidden></button>
 
@@ -1697,22 +1853,48 @@
           </div>
           <div class="mission-list">
             <div class="mission-row">
-              <span>5문제 풀기</span>
-              <strong id="solvedMissionInfo">0 / 5</strong>
+              <span>30문제 풀기</span>
+              <strong id="solvedMissionInfo">0 / 30</strong>
               <div class="mission-meter" aria-hidden="true"><div class="mission-fill" id="solvedMissionFill"></div></div>
             </div>
             <div class="mission-row">
-              <span>3문제 맞히기</span>
-              <strong id="correctMissionInfo">0 / 3</strong>
+              <span>20문제 맞히기</span>
+              <strong id="correctMissionInfo">0 / 20</strong>
               <div class="mission-meter" aria-hidden="true"><div class="mission-fill" id="correctMissionFill"></div></div>
             </div>
             <div class="mission-row">
-              <span>별스티커 5개</span>
-              <strong id="stickerMissionInfo">0 / 5</strong>
+              <span>별스티커 20개</span>
+              <strong id="stickerMissionInfo">0 / 20</strong>
               <div class="mission-meter" aria-hidden="true"><div class="mission-fill" id="stickerMissionFill"></div></div>
             </div>
           </div>
           <div class="sticker-board" id="stickerBoard" aria-label="오늘 모은 별스티커"></div>
+        </div>
+
+        <div class="month-card" aria-label="월별 기록">
+          <div class="mission-head">
+            <span>월별 기록</span>
+            <strong id="monthLabel">이번 달</strong>
+          </div>
+          <div class="month-summary">
+            <div class="month-item">
+              <span>연습일</span>
+              <strong id="monthDaysInfo">0일</strong>
+            </div>
+            <div class="month-item">
+              <span>푼 문제</span>
+              <strong id="monthSolvedInfo">0</strong>
+            </div>
+            <div class="month-item">
+              <span>맞힘</span>
+              <strong id="monthCorrectInfo">0</strong>
+            </div>
+            <div class="month-item">
+              <span>별</span>
+              <strong id="monthStickerInfo">0</strong>
+            </div>
+          </div>
+          <div class="month-board" id="monthBoard" aria-label="이번 달 날짜별 기록"></div>
         </div>
       </aside>
     </div>
@@ -1731,11 +1913,12 @@
     const TOTAL_QUESTIONS = 10;
     const STORAGE_KEY = "yeonseo-math-state-v3";
     const DAILY_MISSIONS = {
-      solved: 5,
-      correct: 3,
-      stickers: 5
+      solved: 30,
+      correct: 20,
+      stickers: 20
     };
-    const STICKER_BOARD_SIZE = 10;
+    const STICKER_BOARD_SIZE = 20;
+    const DAILY_RECORD_RETENTION_DAYS = 370;
     const BLANK_SYMBOL = "□";
     const AUTO_ADVANCE_DELAY_MS = 1100;
 
@@ -1785,6 +1968,7 @@
       hintOpen: false,
       mascotCheering: false,
       settingsOpen: false,
+      areaOpen: false,
       message: "연서야, 같이 풀자!",
       messageType: "",
       best: 0,
@@ -1821,6 +2005,15 @@
       stickerMissionInfo: document.getElementById("stickerMissionInfo"),
       stickerMissionFill: document.getElementById("stickerMissionFill"),
       stickerBoard: document.getElementById("stickerBoard"),
+      monthLabel: document.getElementById("monthLabel"),
+      monthDaysInfo: document.getElementById("monthDaysInfo"),
+      monthSolvedInfo: document.getElementById("monthSolvedInfo"),
+      monthCorrectInfo: document.getElementById("monthCorrectInfo"),
+      monthStickerInfo: document.getElementById("monthStickerInfo"),
+      monthBoard: document.getElementById("monthBoard"),
+      areaToggle: document.getElementById("areaToggle"),
+      areaBackdrop: document.getElementById("areaBackdrop"),
+      areaPanel: document.getElementById("areaPanel"),
       settingsToggle: document.getElementById("settingsToggle"),
       settingsBackdrop: document.getElementById("settingsBackdrop"),
       settingsPanel: document.getElementById("settingsPanel"),
@@ -1930,20 +2123,48 @@
       };
     }
 
+    function normalizeDailyRecord(record) {
+      return {
+        solved: Math.max(0, Number(record?.solved) || 0),
+        correct: Math.max(0, Number(record?.correct) || 0),
+        stickers: Math.max(0, Number(record?.stickers) || 0)
+      };
+    }
+
     function ensureTodayRecord() {
       state.todayKey = getTodayKey();
       if (!state.daily || typeof state.daily !== "object") state.daily = {};
       if (!state.daily[state.todayKey]) state.daily[state.todayKey] = makeDailyRecord();
+      state.daily[state.todayKey] = normalizeDailyRecord(state.daily[state.todayKey]);
       return state.daily[state.todayKey];
     }
 
     function pruneDailyRecords() {
       if (!state.daily || typeof state.daily !== "object") return;
-      const keys = Object.keys(state.daily).sort().slice(-14);
+      const keys = Object.keys(state.daily).sort().slice(-DAILY_RECORD_RETENTION_DAYS);
       state.daily = keys.reduce((records, key) => {
-        records[key] = state.daily[key];
+        records[key] = normalizeDailyRecord(state.daily[key]);
         return records;
       }, {});
+    }
+
+    function getMonthKey(dateKey = state.todayKey) {
+      return dateKey.slice(0, 7);
+    }
+
+    function formatMonthLabel(monthKey) {
+      const [year, month] = monthKey.split("-");
+      return `${year}년 ${Number(month)}월`;
+    }
+
+    function getDaysInMonth(monthKey) {
+      const [year, month] = monthKey.split("-").map(Number);
+      return new Date(year, month, 0).getDate();
+    }
+
+    function getMonthRecordKeys(monthKey) {
+      if (!state.daily || typeof state.daily !== "object") return [];
+      return Object.keys(state.daily).filter((key) => key.startsWith(`${monthKey}-`)).sort();
     }
 
     function recordProblemResult(isCorrect) {
@@ -2832,6 +3053,9 @@
       els.submitButton.disabled = !state.answerText || state.locked || state.finished;
       els.nextButton.disabled = !state.locked || state.finished;
       els.hintButton.disabled = state.finished;
+      els.areaToggle.setAttribute("aria-expanded", String(state.areaOpen));
+      els.areaPanel.hidden = !state.areaOpen;
+      els.areaBackdrop.hidden = !state.areaOpen;
       els.settingsToggle.setAttribute("aria-expanded", String(state.settingsOpen));
       els.settingsPanel.hidden = !state.settingsOpen;
       els.settingsBackdrop.hidden = !state.settingsOpen;
@@ -2849,6 +3073,13 @@
 
     function setSettingsOpen(open) {
       state.settingsOpen = open;
+      if (open) state.areaOpen = false;
+      render();
+    }
+
+    function setAreaOpen(open) {
+      state.areaOpen = open;
+      if (open) state.settingsOpen = false;
       render();
     }
 
@@ -2872,10 +3103,55 @@
         sticker.textContent = i < record.stickers ? "★" : "☆";
         els.stickerBoard.append(sticker);
       }
+
+      renderMonthlyRecord();
+    }
+
+    function renderMonthlyRecord() {
+      const monthKey = getMonthKey();
+      const daysInMonth = getDaysInMonth(monthKey);
+      const records = getMonthRecordKeys(monthKey).map((key) => normalizeDailyRecord(state.daily[key]));
+      const activeRecords = records.filter((record) => record.solved > 0 || record.correct > 0 || record.stickers > 0);
+      const solved = records.reduce((sum, record) => sum + record.solved, 0);
+      const correct = records.reduce((sum, record) => sum + record.correct, 0);
+      const stickers = records.reduce((sum, record) => sum + record.stickers, 0);
+
+      els.monthLabel.textContent = formatMonthLabel(monthKey);
+      els.monthDaysInfo.textContent = `${activeRecords.length}일`;
+      els.monthSolvedInfo.textContent = String(solved);
+      els.monthCorrectInfo.textContent = String(correct);
+      els.monthStickerInfo.textContent = String(stickers);
+
+      els.monthBoard.replaceChildren();
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const dayKey = `${monthKey}-${String(day).padStart(2, "0")}`;
+        const record = normalizeDailyRecord(state.daily?.[dayKey]);
+        const hasRecord = record.solved > 0 || record.correct > 0 || record.stickers > 0;
+        const starCount = hasRecord ? Math.max(1, Math.min(3, Math.ceil(record.stickers / 7))) : 0;
+        const cell = document.createElement("span");
+        const number = document.createElement("span");
+        const stars = document.createElement("span");
+        const count = document.createElement("span");
+
+        cell.className = `month-day${hasRecord ? " has-record" : ""}${dayKey === state.todayKey ? " is-today" : ""}`;
+        cell.setAttribute("aria-label", `${day}일, 푼 문제 ${record.solved}개, 맞힌 문제 ${record.correct}개, 별 ${record.stickers}개`);
+        number.className = "month-day-number";
+        number.textContent = String(day);
+        stars.className = "month-day-stars";
+        stars.textContent = "★".repeat(starCount);
+        count.className = "month-day-count";
+        count.textContent = hasRecord ? `${record.correct}/${record.solved}` : "";
+
+        cell.append(number, stars, count);
+        els.monthBoard.append(cell);
+      }
     }
 
     els.modeButtons.forEach((button) => {
-      button.addEventListener("click", () => resetGame(button.dataset.mode, state.level));
+      button.addEventListener("click", () => {
+        resetGame(button.dataset.mode, state.level);
+        setAreaOpen(false);
+      });
     });
 
     els.levelButtons.forEach((button) => {
@@ -2885,6 +3161,8 @@
       });
     });
 
+    els.areaToggle.addEventListener("click", () => setAreaOpen(!state.areaOpen));
+    els.areaBackdrop.addEventListener("click", () => setAreaOpen(false));
     els.settingsToggle.addEventListener("click", () => setSettingsOpen(!state.settingsOpen));
     els.settingsBackdrop.addEventListener("click", () => setSettingsOpen(false));
     els.hintButton.addEventListener("click", openHint);
@@ -2906,8 +3184,9 @@
         }
       }
 
-      if (event.key === "Escape" && state.settingsOpen) {
-        setSettingsOpen(false);
+      if (event.key === "Escape") {
+        if (state.settingsOpen) setSettingsOpen(false);
+        if (state.areaOpen) setAreaOpen(false);
       }
     });
 
