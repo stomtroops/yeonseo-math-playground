@@ -1941,6 +1941,13 @@
       steady: { label: "새싹 20", max: 20, min: 5, stepMax: 3 },
       challenge: { label: "꽃길 30", max: 30, min: 10, stepMax: 5 }
     };
+    const LEVEL_ORDER = ["easy", "steady", "challenge"];
+    const AUTO_LEVEL_RULES = {
+      promoteCorrect: 7,
+      promoteStreak: 2,
+      supportCorrect: 4,
+      supportStreak: 2
+    };
 
     const STORY_ITEMS = ["딸기", "쿠키", "스티커", "블록", "꽃"];
     const DOT_LAYOUTS = {
@@ -1972,6 +1979,10 @@
       message: "연서야, 같이 풀자!",
       messageType: "",
       best: 0,
+      levelProgress: {
+        passStreak: 0,
+        supportStreak: 0
+      },
       daily: {},
       todayKey: "",
       current: null,
@@ -2044,6 +2055,7 @@
         best: state.best,
         mode: state.mode,
         level: state.level,
+        levelProgress: normalizeLevelProgress(state.levelProgress),
         daily: state.daily
       }));
     }
@@ -2129,6 +2141,52 @@
         correct: Math.max(0, Number(record?.correct) || 0),
         stickers: Math.max(0, Number(record?.stickers) || 0)
       };
+    }
+
+    function makeLevelProgress() {
+      return {
+        passStreak: 0,
+        supportStreak: 0
+      };
+    }
+
+    function normalizeLevelProgress(progress) {
+      return {
+        passStreak: Math.max(0, Number(progress?.passStreak) || 0),
+        supportStreak: Math.max(0, Number(progress?.supportStreak) || 0)
+      };
+    }
+
+    function getAdjacentLevel(levelKey, direction) {
+      const index = LEVEL_ORDER.indexOf(levelKey);
+      if (index < 0) return null;
+      const nextIndex = index + direction;
+      return LEVEL_ORDER[nextIndex] || null;
+    }
+
+    function updateAutoLevelAfterSet() {
+      const progress = normalizeLevelProgress(state.levelProgress);
+      const nextLevel = getAdjacentLevel(state.level, 1);
+      const previousLevel = getAdjacentLevel(state.level, -1);
+
+      progress.passStreak = state.correct >= AUTO_LEVEL_RULES.promoteCorrect ? progress.passStreak + 1 : 0;
+      progress.supportStreak = state.correct <= AUTO_LEVEL_RULES.supportCorrect ? progress.supportStreak + 1 : 0;
+
+      if (nextLevel && progress.passStreak >= AUTO_LEVEL_RULES.promoteStreak) {
+        const from = state.level;
+        state.level = nextLevel;
+        state.levelProgress = makeLevelProgress();
+        return { type: "up", from, to: nextLevel };
+      }
+
+      if (previousLevel && progress.supportStreak >= AUTO_LEVEL_RULES.supportStreak) {
+        state.level = previousLevel;
+        state.levelProgress = makeLevelProgress();
+        return { type: "down", to: previousLevel };
+      }
+
+      state.levelProgress = progress;
+      return null;
     }
 
     function ensureTodayRecord() {
@@ -2581,6 +2639,7 @@
 
     function resetGame(nextMode = state.mode, nextLevel = state.level) {
       clearAutoAdvance();
+      if (nextLevel !== state.level) state.levelProgress = makeLevelProgress();
       state.mode = nextMode;
       state.level = nextLevel;
       state.questionNumber = 1;
@@ -2709,19 +2768,22 @@
       state.finished = true;
       state.locked = true;
       const oldBest = state.best;
+      const levelChange = updateAutoLevelAfterSet();
 
       if (state.score > state.best) {
         state.best = state.score;
-        saveSettings();
       }
+
+      saveSettings();
 
       const starCount = getStarCount();
       const resultLine = state.score > oldBest
         ? `새 최고기록 ${state.score}점. ${state.correct}문제를 맞혔어요.`
         : `${state.score}점. ${state.correct}문제를 맞혔어요.`;
+      const levelLine = levelChange?.type === "up" ? ` 다음 세트는 ${LEVELS[levelChange.to].label} 단계로 올라가요.` : "";
 
       els.resultTitle.textContent = starCount === 3 ? "오늘 정말 반짝였어" : "오늘 연습 끝";
-      els.resultText.textContent = resultLine;
+      els.resultText.textContent = `${resultLine}${levelLine}`;
       els.resultStars.textContent = "★".repeat(starCount) + "☆".repeat(3 - starCount);
       els.resultPanel.hidden = false;
       render();
@@ -3202,6 +3264,7 @@
     state.best = Number(storedState.best) || 0;
     if (MODES[storedState.mode]) state.mode = storedState.mode;
     if (LEVELS[storedState.level]) state.level = storedState.level;
+    state.levelProgress = normalizeLevelProgress(storedState.levelProgress);
     state.daily = storedState.daily && typeof storedState.daily === "object" ? storedState.daily : {};
     ensureTodayRecord();
     resetGame(state.mode, state.level);
